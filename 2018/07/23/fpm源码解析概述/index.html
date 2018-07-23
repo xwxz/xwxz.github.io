@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.3.0',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="​    之前看过网上零散的关于php-fpm分析的文章，要么不全，要么就是讲解php-fpm的配置文件的，还有就是讲解nginx与php-fpm之间通信配置的。关于php-fpm中的进程管理、信号管理、事件处理、时钟管理、请求处理等几乎为零。故本着学习的宗旨对fpm源码进行解读。本系列采用php-7.2.0版本中的php-fpm扩展进行分系列讲解。本系列共分为5节，具体如下：">
+<meta name="keywords" content="fpm,源码,php7,php-fpm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fpm源码解析概述">
+<meta property="og:url" content="http://bemuler.github.io/2018/07/23/fpm源码解析概述/index.html">
+<meta property="og:site_name" content="小吴学长">
+<meta property="og:description" content="​    之前看过网上零散的关于php-fpm分析的文章，要么不全，要么就是讲解php-fpm的配置文件的，还有就是讲解nginx与php-fpm之间通信配置的。关于php-fpm中的进程管理、信号管理、事件处理、时钟管理、请求处理等几乎为零。故本着学习的宗旨对fpm源码进行解读。本系列采用php-7.2.0版本中的php-fpm扩展进行分系列讲解。本系列共分为5节，具体如下：">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-07-23T12:23:15.974Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="fpm源码解析概述">
+<meta name="twitter:description" content="​    之前看过网上零散的关于php-fpm分析的文章，要么不全，要么就是讲解php-fpm的配置文件的，还有就是讲解nginx与php-fpm之间通信配置的。关于php-fpm中的进程管理、信号管理、事件处理、时钟管理、请求处理等几乎为零。故本着学习的宗旨对fpm源码进行解读。本系列采用php-7.2.0版本中的php-fpm扩展进行分系列讲解。本系列共分为5节，具体如下：">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="小吴学长" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="http://bemuler.github.io/2018/07/23/fpm源码解析概述/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>fpm源码解析概述 | 小吴学长</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小吴学长</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">学习小记</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://bemuler.github.io/2018/07/23/fpm源码解析概述/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xwxz">
+      <meta itemprop="description" content="记录工作中学习的小知识点">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小吴学长">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">fpm源码解析概述
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-23 16:42:42 / 修改时间：20:23:15" itemprop="dateCreated datePublished" datetime="2018-07-23T16:42:42+08:00">2018-07-23</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>​    之前看过网上零散的关于php-fpm分析的文章，要么不全，要么就是讲解php-fpm的配置文件的，还有就是讲解nginx与php-fpm之间通信配置的。关于php-fpm中的进程管理、信号管理、事件处理、时钟管理、请求处理等几乎为零。故本着学习的宗旨对fpm源码进行解读。本系列采用php-7.2.0版本中的php-fpm扩展进行分系列讲解。本系列共分为5节，具体如下：</p>
+<a id="more"></a>
+<ol>
+<li><a href="/2018/07/23/fpm源码之目录介绍">fpm源码之目录介绍</a></li>
+<li><a href="/2018/07/23/fpm源码之配置解析">fpm源码之配置解析</a></li>
+<li><a href="/2018/07/23/fpm源码之进程管理">fpm源码之进程管理</a></li>
+<li><a href="/2018/07/23/fpm源码之信号处理">fpm源码之信号处理</a></li>
+<li><a href="/2018/07/23/fpm源码之事件管理">fpm源码之事件管理</a></li>
+<li><a href="/2018/07/23/fpm源码之请求处理">fpm源码之请求处理</a></li>
+</ol>
+<p>源码地址：<a href="https://github.com/php/php-src" target="_blank" rel="noopener">https://github.com/php/php-src</a></p>
+<p>我们知道fpm是以php扩展的形式存在的，那么在开始讲解fpm源码之前，我简单介绍下php扩展。这里参考的是<a href="http://php.net/manual/zh/internals2.structure.php" target="_blank" rel="noopener">官方文档</a></p>
+<h1 id="组成扩展的文件"><a href="#组成扩展的文件" class="headerlink" title="组成扩展的文件"></a>组成扩展的文件</h1><p>不管通过什么方式创建的扩展，都至少包含以下四个文件：</p>
+<p><strong>config.m4</strong></p>
+<p>​    unix构建系统配置 <a href="http://php.net/manual/zh/internals2.buildsys.configunix.php" target="_blank" rel="noopener">参考</a></p>
+<p><strong>config.w32</strong></p>
+<p>​    windows构建系统配置</p>
+<p><strong>php_xxx.h</strong></p>
+<p>​    xxx为扩展名字，当将扩展作为静态模块构建并放入PHP二进制包时，构建系统会要求用php_加扩展的名称命名的头文件包含一个对扩展模块结构的指针定义。就像其他头文件，此文件经常包含附加的宏、原型和全局变量。</p>
+<p><strong>xxx.c</strong></p>
+<p>​    主要的扩展源文件。按惯例，此文件名就是扩展的名称，比如这里的xxx，但不是必需的。此文件包含模块结构定义、INI条目、管理函数、用户空间函数和其他扩展所需的内容。</p>
+<p>扩展应包含任意数量的头文件、源文件、单元测试和其他支持文件。此四个文件仅够组成最小的扩展。</p>
+<p>比如通过php源文件中<code>$path/php-7.2.0/ext/ext_skel</code>命令生成的xxx扩展，其目录如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── CREDITS //纯文本格式列出了扩展的贡献者和（或 ）维护者</span><br><span class="line">├── EXPERIMENTAL</span><br><span class="line">├── config.m4</span><br><span class="line">├── config.w32</span><br><span class="line">├── php_xxx.h</span><br><span class="line">├── tests //测试扩展的测试文件，php扩展使用php来测试</span><br><span class="line">│   └── 001.phpt</span><br><span class="line">├── xxx.c</span><br><span class="line">└── xxx.php</span><br></pre></td></tr></table></figure>
+<p>其中<strong>xxx.php</strong>内容如下，主要用于测试扩展：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$br = (php_sapi_name() == <span class="string">"cli"</span>)? <span class="string">""</span>:<span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(!extension_loaded(<span class="string">'xxx'</span>)) &#123;</span><br><span class="line">	dl(<span class="string">'xxx.'</span> . PHP_SHLIB_SUFFIX);</span><br><span class="line">&#125;</span><br><span class="line">$module = <span class="string">'xxx'</span>;</span><br><span class="line">$functions = get_extension_funcs($module);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"Functions available in the test extension:$br\n"</span>;</span><br><span class="line"><span class="keyword">foreach</span>($functions <span class="keyword">as</span> $func) &#123;</span><br><span class="line">    <span class="keyword">echo</span> $func.<span class="string">"$br\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"$br\n"</span>;</span><br><span class="line">$function = <span class="string">'confirm_'</span> . $module . <span class="string">'_compiled'</span>;</span><br><span class="line"><span class="keyword">if</span> (extension_loaded($module)) &#123;</span><br><span class="line">	$str = $function($module);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">	$str = <span class="string">"Module $module is not compiled into PHP"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"$str\n"</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<h1 id="C语言基础知识"><a href="#C语言基础知识" class="headerlink" title="C语言基础知识"></a>C语言基础知识</h1><h2 id="C语言关键字"><a href="#C语言关键字" class="headerlink" title="C语言关键字"></a>C语言关键字</h2><h3 id="extern"><a href="#extern" class="headerlink" title="extern"></a>extern</h3><p>用在变量或函数的声明前，用来说明”此变量/函数是在别处定义的，要在此处引用”。</p>
+<p>对变量而言，变量的声明有两种情况：</p>
+<p>1、 一种是需要建立存储空间的，不用加extern；</p>
+<p>2、另一种是不需要建立存储空间，需要加extern 。如果你想在本源文件中使用另一个源文件的变量，就需要在使用前用extern声明该变量，或者在头文件中用extern声明该变量；</p>
+<p>举例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="keyword">int</span> a;<span class="comment">//声明一个全局变量a</span></span><br><span class="line"><span class="keyword">int</span> a; <span class="comment">//定义一个全局变量a</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">int</span> a =<span class="number">0</span> ;<span class="comment">//定义一个全局变量a 并给初值</span></span><br><span class="line"><span class="keyword">int</span> a =<span class="number">0</span>;<span class="comment">//定义一个全局变量a,并给初值</span></span><br></pre></td></tr></table></figure>
+<p>注意变量定义智能出现在一处，而外部引用声明可以出现多次。</p>
+<p>对函数而言，如果你想在本源文件中使用另一个源文件的函数，就需要在使用前用声明该函数，声明函数加不加extern都没关系，所以在头文件中函数可以不用加extern。</p>
+<h3 id="memset"><a href="#memset" class="headerlink" title="memset"></a>memset</h3><p><strong>内存申请并初始化函数</strong>：将s所指向的某一块内存中的后n个字节的内容全部设置为ch制定的ASCII值，第一个值为指定的内存地址，块的大小由第三个参数决定。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">memset</span><span class="params">(<span class="keyword">void</span> *s, <span class="keyword">int</span> ch, <span class="keyword">size_t</span> n)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="malloc"><a href="#malloc" class="headerlink" title="malloc"></a>malloc</h3><p><strong>动态内存分配：</strong>全称是memory allocation，用于申请一块连续的指定大小的内存块区域以<code></code>void<em><code>类型返回分配的内存区域地址。其中</code>void</em>`表示未确定类型的指针。其可以通过类型转换强制转换为任何其他类型的指针。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> size)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h3><p><strong>指针是程序数据在内存中的地址，而指针变量是用来保存这些地址的变量。</strong></p>
+<p>我们指知道：C语言中的数组是指 一类 类型，数组具体区分为  int 类型数组，double类型数组,char数组 等等。同样指针 这个概念也泛指 一类 数据类型，int指针类型，double指针类型，char指针类型等等。</p>
+<p>通常，我们用int类型保存一些整型的数据，如 int num = 97 ， 我们也会用char来存储字符： char ch = ‘a’。</p>
+<p>我们也必须知道：任何程序数据载入内存后，在内存都有他们的地址，这就是指针。而为了保存一个数据在内存中的地址，我们就需要指针变量。</p>
+<h3 id="void-类型指针"><a href="#void-类型指针" class="headerlink" title="void *类型指针"></a>void *类型指针</h3><p>由于void是空类型，因此<code>void *</code>类型的指针只保存了指针的值，而丢失了类型信息，我们不知道他指向的数据是什么类型的，只指定这个数据在内存中的起始地址，如果想要完整的提取指向的数据，程序员就必须对这个指针做出正确的类型转换，然后再解指针。因为，编译器不允许直接对<code>void *</code>类型的指针做解指针操作。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/fpm/" rel="tag"># fpm</a>
+          
+            <a href="/tags/源码/" rel="tag"># 源码</a>
+          
+            <a href="/tags/php7/" rel="tag"># php7</a>
+          
+            <a href="/tags/php-fpm/" rel="tag"># php-fpm</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/22/Go调度器/" rel="next" title="golang是如何调度goroutine的？">
+                <i class="fa fa-chevron-left"></i> golang是如何调度goroutine的？
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/23/fpm源码之目录介绍/" rel="prev" title="fpm源码之目录介绍">
+                fpm源码之目录介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="xwxz" />
+            
+              <p class="site-author-name" itemprop="name">xwxz</p>
+              <p class="site-description motion-element" itemprop="description">记录工作中学习的小知识点</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">15</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#组成扩展的文件"><span class="nav-text">组成扩展的文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#C语言基础知识"><span class="nav-text">C语言基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#C语言关键字"><span class="nav-text">C语言关键字</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#extern"><span class="nav-text">extern</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#memset"><span class="nav-text">memset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#malloc"><span class="nav-text">malloc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#指针"><span class="nav-text">指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#void-类型指针"><span class="nav-text">void *类型指针</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xwxz</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.3.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
