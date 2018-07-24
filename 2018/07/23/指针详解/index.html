@@ -108,15 +108,15 @@
 
 
 
-  <meta name="description" content="前言这不是我第一次写关于C指针的文章了，只是因为指针对于C来说太重要，而且随着自己编程经历越多，对指针的理解越多，因此有了本文。然而，想要全面理解指针，除了要对C语言有熟练的掌握外，还要有计算机硬件以及操作系统等方方面面的基本知识。所以我想通过一篇文章来尽可能的讲解指针，以对得起这个文章的标题吧。">
+  <meta name="description" content="前言​    一直对c语言指针有种恐惧心理，觉得理解起来特别费劲，直到看到这篇文章，才突然觉得大学里c语言简直坑人。本篇文章转载自博客园，博主lulipro，文章地址：https://www.cnblogs.com/lulipro/p/7460206.html 非常感谢原作者的精彩讲解。如果你看到这篇文章可以点进原文看看。之所以转载到自己空间，只是作为知识搜藏。">
 <meta name="keywords" content="指针,C语言">
 <meta property="og:type" content="article">
 <meta property="og:title" content="C语言指针详解">
 <meta property="og:url" content="http://bemuler.github.io/2018/07/23/指针详解/index.html">
 <meta property="og:site_name" content="小吴学长">
-<meta property="og:description" content="前言这不是我第一次写关于C指针的文章了，只是因为指针对于C来说太重要，而且随着自己编程经历越多，对指针的理解越多，因此有了本文。然而，想要全面理解指针，除了要对C语言有熟练的掌握外，还要有计算机硬件以及操作系统等方方面面的基本知识。所以我想通过一篇文章来尽可能的讲解指针，以对得起这个文章的标题吧。">
+<meta property="og:description" content="前言​    一直对c语言指针有种恐惧心理，觉得理解起来特别费劲，直到看到这篇文章，才突然觉得大学里c语言简直坑人。本篇文章转载自博客园，博主lulipro，文章地址：https://www.cnblogs.com/lulipro/p/7460206.html 非常感谢原作者的精彩讲解。如果你看到这篇文章可以点进原文看看。之所以转载到自己空间，只是作为知识搜藏。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79ly1ftk3cdr1ppj30bj03umx4.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcly1ftkpv5yfupj30bj03ugly.jpg">
 <meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79ly1ftk3cl2y2oj30j807g3zn.jpg">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79ly1ftk3csnsi9j30gi037jr8.jpg">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79ly1ftk3dmiyo0j30ln06tdg0.jpg">
@@ -125,11 +125,11 @@
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79ly1ftk3br7ffij30es07qwep.jpg">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79ly1ftk3bhux9vj30ov07z3z1.jpg">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79ly1ftk3b0tdykj307x03umx0.jpg">
-<meta property="og:updated_time" content="2018-07-23T12:59:47.213Z">
+<meta property="og:updated_time" content="2018-07-24T02:02:21.225Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C语言指针详解">
-<meta name="twitter:description" content="前言这不是我第一次写关于C指针的文章了，只是因为指针对于C来说太重要，而且随着自己编程经历越多，对指针的理解越多，因此有了本文。然而，想要全面理解指针，除了要对C语言有熟练的掌握外，还要有计算机硬件以及操作系统等方方面面的基本知识。所以我想通过一篇文章来尽可能的讲解指针，以对得起这个文章的标题吧。">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79ly1ftk3cdr1ppj30bj03umx4.jpg">
+<meta name="twitter:description" content="前言​    一直对c语言指针有种恐惧心理，觉得理解起来特别费劲，直到看到这篇文章，才突然觉得大学里c语言简直坑人。本篇文章转载自博客园，博主lulipro，文章地址：https://www.cnblogs.com/lulipro/p/7460206.html 非常感谢原作者的精彩讲解。如果你看到这篇文章可以点进原文看看。之所以转载到自己空间，只是作为知识搜藏。">
+<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tKfTcly1ftkpv5yfupj30bj03ugly.jpg">
 
 
 
@@ -347,12 +347,24 @@
                 
               
 
-              <time title="创建时间：2018-07-23 20:46:24 / 修改时间：20:59:47" itemprop="dateCreated datePublished" datetime="2018-07-23T20:46:24+08:00">2018-07-23</time>
+              <time title="创建时间：2018-07-23 20:46:24" itemprop="dateCreated datePublished" datetime="2018-07-23T20:46:24+08:00">2018-07-23</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-07-24 10:02:21" itemprop="dateModified" datetime="2018-07-24T10:02:21+08:00">2018-07-24</time>
               
             
           </span>
@@ -385,7 +397,7 @@
       
 
       
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这不是我第一次写关于C指针的文章了，只是因为指针对于C来说太重要，而且随着自己编程经历越多，对指针的理解越多，因此有了本文。然而，想要全面理解指针，除了要对C语言有熟练的掌握外，还要有计算机硬件以及操作系统等方方面面的基本知识。所以我想通过一篇文章来尽可能的讲解指针，以对得起这个文章的标题吧。</p>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>​    一直对c语言指针有种恐惧心理，觉得理解起来特别费劲，直到看到这篇文章，才突然觉得大学里c语言简直坑人。本篇文章转载自博客园，博主lulipro，文章地址：<a href="https://www.cnblogs.com/lulipro/p/7460206.html" target="_blank" rel="noopener">https://www.cnblogs.com/lulipro/p/7460206.html</a> 非常感谢原作者的精彩讲解。如果你看到这篇文章可以点进原文看看。之所以转载到自己空间，只是作为知识搜藏。</p>
 <a id="more"></a> 
 <h2 id="为什么需要指针"><a href="#为什么需要指针" class="headerlink" title="为什么需要指针?"></a>为什么需要指针?</h2><p>指针解决了一些编程中基本的问题。</p>
 <p>第一，指针的使用使得不同区域的代码可以轻易的共享内存数据。当然你也可以通过数据的复制达到相同的效果，但是这样往往效率不太好，因为诸如结构体等大型数据，占用的字节数多，复制很消耗性能。但使用指针就可以很好的避免这个问题，因为任何类型的指针占用的字节数都是一样的（根据平台不同，有4字节或者8字节或者其他可能）。</p>
@@ -395,7 +407,7 @@
 <p>通常，我们用int类型保存一些整型的数据，如 int num = 97 ， 我们也会用char来存储字符： char ch = ‘a’。</p>
 <p>我们也必须知道：任何程序数据载入内存后，在内存都有他们的地址，这就是指针。而为了保存一个数据在内存中的地址，我们就需要指针变量。</p>
 <p>因此：<strong>指针是程序数据在内存中的地址，而指针变量是用来保存这些地址的变量。</strong></p>
-<p> <img src="https://ws1.sinaimg.cn/large/006tNc79ly1ftk3cdr1ppj30bj03umx4.jpg" alt="img"></p>
+<p> <img src="https://ws2.sinaimg.cn/large/006tKfTcly1ftkpv5yfupj30bj03ugly.jpg" alt=""></p>
 <h2 id="为什么程序中的数据会有自己的地址？"><a href="#为什么程序中的数据会有自己的地址？" class="headerlink" title="为什么程序中的数据会有自己的地址？"></a>为什么程序中的数据会有自己的地址？</h2><p>弄清这个问题我们需要从操作系统的角度去认知内存。</p>
 <p>电脑维修师傅眼中的内存是这样的：内存在物理上是由一组DRAM芯片组成的。</p>
 <p>而作为一个程序员，我们不需要了解内存的物理结构，操作系统将RAM等硬件和软件结合起来，给程序员提供的一种对内存使用的抽象。,这种抽象机制使得程序使用的是虚拟存储器,而不是直接操作和使用真实存在的物理存储器。所有的虚拟地址形成的集合就是虚拟地址空间。 </p>
@@ -520,7 +532,6 @@
 <p>如下图：</p>
 <p> <img src="https://ws4.sinaimg.cn/large/006tNc79ly1ftk3b0tdykj307x03umx0.jpg" alt=""></p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//测试机器使用的是否为小端模式。是，则返回true，否则返回false</span></span><br><span class="line"><span class="comment">//这个方法判别的依据就是：C语言中一个对象的地址就是这个对象占用的字节中，地址值最小的那个字节的地址。</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isSmallIndain</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">      <span class="keyword">unsigned</span> <span class="keyword">int</span> val = <span class="string">'A'</span>;</span><br><span class="line">      <span class="keyword">unsigned</span> <span class="keyword">char</span>* p = (<span class="keyword">unsigned</span> <span class="keyword">char</span>*)&amp;val;  <span class="comment">//C/C++：对于多字节数据，取地址是取的数据对象的第一个字节的地址，也就是数据的低地址</span></span><br><span class="line">      </span><br><span class="line">      <span class="keyword">return</span> *p == <span class="string">'A'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 欢迎转载自：<a href="https://www.cnblogs.com/lulipro/p/7460206.html" target="_blank" rel="noopener">www.cnblogs.com/lulipro</a> 非常感谢原作者的精彩讲解</p>
 
       
     </div>
