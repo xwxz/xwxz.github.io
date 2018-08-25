@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.3.0',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="本文在php-7.2.0版本下进行分析。主要介绍fpm目录文件，并介绍fpm入口文件。">
+<meta name="keywords" content="PHP,源码分析,fpm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fpm源码之初探【原创】">
+<meta property="og:url" content="http://xwxz.github.io/php-fpm-02/index.html">
+<meta property="og:site_name" content="风月">
+<meta property="og:description" content="本文在php-7.2.0版本下进行分析。主要介绍fpm目录文件，并介绍fpm入口文件。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-08-25T08:05:02.336Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="fpm源码之初探【原创】">
+<meta name="twitter:description" content="本文在php-7.2.0版本下进行分析。主要介绍fpm目录文件，并介绍fpm入口文件。">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="风月" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="http://xwxz.github.io/php-fpm-02/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>fpm源码之初探【原创】 | 风月</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">风月</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">清如风，明如月</h1>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">14</span></a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">9</span></a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+    <a href="/404.html" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />公益 404</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xwxz.github.io/php-fpm-02/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="风月">
+      <meta itemprop="description" content="记录工作中学习的小知识点">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风月">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">fpm源码之初探【原创】
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-24 00:00:00" itemprop="dateCreated datePublished" datetime="2018-07-24T00:00:00+08:00">2018-07-24</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-08-25 16:05:02" itemprop="dateModified" datetime="2018-08-25T16:05:02+08:00">2018-08-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/php-fpm-02/" itemprop="url" rel="index"><span itemprop="name">php/fpm/02</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文在php-7.2.0版本下进行分析。主要介绍fpm目录文件，并介绍fpm入口文件。</p>
+<a id="more"></a>
+<h1 id="1、fpm目录"><a href="#1、fpm目录" class="headerlink" title="1、fpm目录"></a>1、fpm目录</h1><p>fpm位于<code>php_src/sapi</code>目录下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── CREDITS //fpm名称和贡献者列表</span><br><span class="line">├── LICENSE //声明</span><br><span class="line">├── Makefile.frag //make时使用的文件</span><br><span class="line">├── config.m4 //构建fpm扩展的配置文件</span><br><span class="line">├── fpm //fpm源码目录</span><br><span class="line">├── init.d.php-fpm.in //fpm提供给init.d程序使用的配置</span><br><span class="line">├── php-fpm.8.in </span><br><span class="line">├── php-fpm.conf.in //fpm运行时的配置文件</span><br><span class="line">├── php-fpm.service.in //fpm提供给systemd管理时使用的配置</span><br><span class="line">├── status.html.in // fpm运行时状态查看页面</span><br><span class="line">├── tests //测试fpm的脚本</span><br><span class="line">└── www.conf.in //fpm运行时配置，这个主要是pool池配置管理</span><br></pre></td></tr></table></figure>
+<p>linux管理进程有两种常见方式，centOS7以下，基本采用init.d来管理操作系统的启动，而centOS7开始使用systemd来管理系统的启动，关于这两种启动方式，超出本文所讲述的范围，这里只给出相关链接。systemd，阮一峰老师的一篇文章，讲解的非常浅显易懂，<a href="http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html" target="_blank" rel="noopener">Systemd入门</a>。init这里没有找到比较好的，给出维基百科的解释。<a href="https://zh.wikipedia.org/wiki/Init" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/Init</a></p>
+<p>之所以要提及init和systemd，主要是在我们的fpm目录下，为这两个程序提供了相应的管理配置。具体配置这里不展开详述了，感兴趣的可以了解相关资料。</p>
+<h2 id="fpm目录"><a href="#fpm目录" class="headerlink" title="fpm目录"></a>fpm目录</h2><p>存放fpm源码的目录，fpm采用c语言编写，每个文件都是成对出现的，<code>.c</code>和<code>.h</code>文件，其详细结构如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">php-7.2.0/sapi/fpm</span><br><span class="line">.</span><br><span class="line">├── events //fpm事件处理相关源码</span><br><span class="line">│   ├── devpoll.c</span><br><span class="line">│   ├── devpoll.h</span><br><span class="line">│   ├── epoll.c</span><br><span class="line">│   ├── epoll.h</span><br><span class="line">│   ├── kqueue.c</span><br><span class="line">│   ├── kqueue.h</span><br><span class="line">│   ├── poll.c</span><br><span class="line">│   ├── poll.h</span><br><span class="line">│   ├── port.c</span><br><span class="line">│   ├── port.h</span><br><span class="line">│   ├── select.c</span><br><span class="line">│   └── select.h</span><br><span class="line">├── fpm.c //fpm主程序实现</span><br><span class="line">├── fpm.h //fpm主程序头文件</span><br><span class="line">├── fpm_arrays.h //fpm数组相关</span><br><span class="line">├── fpm_atomic.h //fpm原子操作相关</span><br><span class="line">├── fpm_children.c //fpm子进程相关</span><br><span class="line">├── fpm_children.h </span><br><span class="line">├── fpm_cleanup.c </span><br><span class="line">├── fpm_cleanup.h //fpm内存清理</span><br><span class="line">├── fpm_clock.c</span><br><span class="line">├── fpm_clock.h //fpm时钟管理</span><br><span class="line">├── fpm_conf.c</span><br><span class="line">├── fpm_conf.h //fpm运行时配置解析，包括运行方式、进程池等的配置</span><br><span class="line">├── fpm_config.h //fpm计数器配置</span><br><span class="line">├── fpm_env.c</span><br><span class="line">├── fpm_env.h //fpm环境变量</span><br><span class="line">├── fpm_events.c</span><br><span class="line">├── fpm_events.h //fpm事件处理相关</span><br><span class="line">├── fpm_log.c</span><br><span class="line">├── fpm_log.h //fpm日志相关</span><br><span class="line">├── fpm_main.c //fpm入口文件</span><br><span class="line">├── fpm_php.c</span><br><span class="line">├── fpm_php.h //fpm中php与zend的中间交互</span><br><span class="line">├── fpm_php_trace.c</span><br><span class="line">├── fpm_php_trace.h //fpm执行栈</span><br><span class="line">├── fpm_process_ctl.c</span><br><span class="line">├── fpm_process_ctl.h //fpm进程控制</span><br><span class="line">├── fpm_request.c </span><br><span class="line">├── fpm_request.h //fpm请求处理</span><br><span class="line">├── fpm_scoreboard.c</span><br><span class="line">├── fpm_scoreboard.h //fpm的计数器，主要用于管理work</span><br><span class="line">├── fpm_shm.c</span><br><span class="line">├── fpm_shm.h //fpm共享内存分配处理</span><br><span class="line">├── fpm_signals.c</span><br><span class="line">├── fpm_signals.h //fpm信号处理</span><br><span class="line">├── fpm_sockets.c </span><br><span class="line">├── fpm_sockets.h //fpm套接字处理</span><br><span class="line">├── fpm_status.c</span><br><span class="line">├── fpm_status.h //fpm状态管理</span><br><span class="line">├── fpm_stdio.c</span><br><span class="line">├── fpm_stdio.h //fpm输入输出管理</span><br><span class="line">├── fpm_str.h //fpm字符串复制</span><br><span class="line">├── fpm_systemd.c </span><br><span class="line">├── fpm_systemd.h //fpm与systemd通信管理</span><br><span class="line">├── fpm_trace.c</span><br><span class="line">├── fpm_trace.h //fpm调用栈相关</span><br><span class="line">├── fpm_trace_mach.c //fpm master进程检测相关</span><br><span class="line">├── fpm_trace_pread.c //fpm进程状态检测相关</span><br><span class="line">├── fpm_trace_ptrace.c</span><br><span class="line">├── fpm_unix.c</span><br><span class="line">├── fpm_unix.h //处理unix文件系统相关</span><br><span class="line">├── fpm_worker_pool.c</span><br><span class="line">├── fpm_worker_pool.h //fpm 工作进程池相关</span><br><span class="line">├── zlog.c</span><br><span class="line">└── zlog.h //fpm日志记录</span><br></pre></td></tr></table></figure>
+<h2 id="fpm入口程序"><a href="#fpm入口程序" class="headerlink" title="fpm入口程序"></a>fpm入口程序</h2><p><strong>FPM(FastCGI Process Manager)</strong>是PHP FastCGI运行模式的一个进程管理器，从它的定义可以看出，FPM的核心功能是进程管理，那么它用来管理什么进程呢？接下来我们将从入口程序开始，一点一点揭开其神秘面纱。分析一个程序，找准入口是关键，找到入口后根据主脉络往下捋即可。按照这样的指导思想，那我们就开始吧。</p>
+<p><strong>php_src/sapi/fpm/fpm/fpm_main.c：</strong>fpm入口程序，找到main入口函数，我们先来看下fpm启动执行的主要流程：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//注册SAPI:将全局变量sapi_module设置为cgi_sapi_module</span></span><br><span class="line">    sapi_startup(&amp;cgi_sapi_module);</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//执行php_module_starup()</span></span><br><span class="line">    <span class="keyword">if</span> (cgi_sapi_module.startup(&amp;cgi_sapi_module) == FAILURE) &#123;</span><br><span class="line">        <span class="keyword">return</span> FPM_EXIT_SOFTWARE;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//初始化</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="number">0</span> &gt; fpm_init(...))&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    fpm_is_running = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    fcgi_fd = fpm_run(&amp;max_requests);<span class="comment">//后面都是worker进程的操作，master进程不会走到下面，因为在fpm_run中已经根据work_pool进行子进程fork了</span></span><br><span class="line">    parent = <span class="number">0</span>;</span><br><span class="line">    ...</span><br><span class="line">	request = fpm_init_request(fcgi_fd);<span class="comment">//初始化请求，开辟内存空间、设置请求相关的环境变量、绑定socket等</span></span><br><span class="line">	zend_first_try &#123;<span class="comment">//开始一个try</span></span><br><span class="line">        <span class="keyword">while</span> (EXPECTED(fcgi_accept_request(request) &gt;= <span class="number">0</span>)) &#123;<span class="comment">//阻塞等待请求到来，关于fpm如何接受请求，后面会有文章专门讲解</span></span><br><span class="line">            ...</span><br><span class="line">            init_request_info();<span class="comment">//初始化请求结构，包括PATH_INFO、SCRIPT_NAME、REQUEST_URI、SCRIPT_FILENAME等</span></span><br><span class="line">            fpm_request_info();<span class="comment">//将cgi中的请求信息复制到fpm请求中</span></span><br><span class="line">            php_request_startup()<span class="comment">//php请求处理开始</span></span><br><span class="line">            fpm_status_handle_request()<span class="comment">//处理fpm启动后状态检测，如果状态不太对，就跳过后面的处理，结束请求</span></span><br><span class="line">            ...</span><br><span class="line">            php_fopen_primary_script(&amp;file_handle)<span class="comment">//</span></span><br><span class="line"></span><br><span class="line">            ...</span><br><span class="line">            fpm_request_executing();<span class="comment">//请求执行</span></span><br><span class="line">            php_execute_script(&amp;file_handle);<span class="comment">//执行脚本</span></span><br><span class="line">            ...</span><br><span class="line">            fpm_request_end();<span class="comment">//请求执行结束</span></span><br><span class="line">            php_request_shutdown((<span class="keyword">void</span> *) <span class="number">0</span>);<span class="comment">//请求关闭</span></span><br><span class="line">            ...</span><br><span class="line">            requests++;</span><br><span class="line">            <span class="keyword">if</span> (UNEXPECTED(max_requests &amp;&amp; (requests == max_requests))) &#123;<span class="comment">//判断一个子进程处理的请求数，如果达到处理上线就光荣退出</span></span><br><span class="line">                fcgi_request_set_keep(request, <span class="number">0</span>);</span><br><span class="line">                fcgi_finish_request(request, <span class="number">0</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            ...</span><br><span class="line">    	&#125;</span><br><span class="line">        fcgi_destroy_request(request);<span class="comment">//销毁fpm请求</span></span><br><span class="line">		fcgi_shutdown();<span class="comment">//fcgi关闭</span></span><br><span class="line">	&#125; zend_catch &#123;</span><br><span class="line">		exit_status = FPM_EXIT_SOFTWARE;</span><br><span class="line">	&#125; zend_end_try();</span><br><span class="line">    </span><br><span class="line">    php_module_shutdown();<span class="comment">//关闭模块</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> exit_status;<span class="comment">//进程退出</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>总结一些入口文件干的事情：</p>
+<ol>
+<li>初始化数据结构</li>
+<li>解析命令行参数</li>
+<li>初始化fpm_init</li>
+<li>执行fpm_run</li>
+<li>启动监听端口并处理请求（此处主进程是不会走到的）</li>
+</ol>
+<p>下面一篇文章将会讲解fpm的进程是如何管理的</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>风月</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://xwxz.github.io/php-fpm-02/" title="fpm源码之初探【原创】">http://xwxz.github.io/php-fpm-02/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/PHP/" rel="tag"># PHP</a>
+          
+            <a href="/tags/源码分析/" rel="tag"># 源码分析</a>
+          
+            <a href="/tags/fpm/" rel="tag"># fpm</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/php-fpm-01/" rel="next" title="fpm源码解析准备【原创】">
+                <i class="fa fa-chevron-left"></i> fpm源码解析准备【原创】
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zODM1NS8xNDg4Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="风月" />
+            
+              <p class="site-author-name" itemprop="name">风月</p>
+              <p class="site-description motion-element" itemprop="description">记录工作中学习的小知识点</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:419444595@qq.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://weibo.com/smuler" target="_blank" title="weibo" rel="external nofollow"><i class="fa fa-fw fa-weibo"></i>weibo</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰的网络日志" target="_blank">阮一峰的网络日志</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1、fpm目录"><span class="nav-text">1、fpm目录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#fpm目录"><span class="nav-text">fpm目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fpm入口程序"><span class="nav-text">fpm入口程序</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">风月</span>
+
+  
+
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.3.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
