@@ -108,21 +108,18 @@
 
 
 
-  <meta name="description" content="之前看过网上零散的关于php-fpm分析的文章，要么不全，要么就是讲解php-fpm的配置文件的，还有就是讲解nginx与php-fpm之间通信配置的。关于php-fpm中的进程管理、信号管理、事件处理、时钟管理、请求处理等几乎为零。故本着学习的宗旨对fpm源码进行解读。本系列采用php-7.2.0版本中的php-fpm扩展进行分系列讲解。本系列共分为5节，具体如下：">
+  <meta name="description" content="本文在php-7.2.0版本下进行分析。主要介绍fpm目录文件，并介绍fpm入口文件。">
 <meta name="keywords" content="PHP,源码分析,fpm">
 <meta property="og:type" content="article">
-<meta property="og:title" content="fpm源码解析准备【原创】">
+<meta property="og:title" content="fpm源码之初探【原创】">
 <meta property="og:url" content="http://xwxz.github.io/php-fpm-01/index.html">
 <meta property="og:site_name" content="风月">
-<meta property="og:description" content="之前看过网上零散的关于php-fpm分析的文章，要么不全，要么就是讲解php-fpm的配置文件的，还有就是讲解nginx与php-fpm之间通信配置的。关于php-fpm中的进程管理、信号管理、事件处理、时钟管理、请求处理等几乎为零。故本着学习的宗旨对fpm源码进行解读。本系列采用php-7.2.0版本中的php-fpm扩展进行分系列讲解。本系列共分为5节，具体如下：">
+<meta property="og:description" content="本文在php-7.2.0版本下进行分析。主要介绍fpm目录文件，并介绍fpm入口文件。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://php.net/manual/zh/images/befd863081615f539082d9ff76bf7b39-zend.01-internal-structure.png">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcly1ftl178ha0pj305o0iyt8t.jpg">
-<meta property="og:updated_time" content="2018-08-25T08:05:12.395Z">
+<meta property="og:updated_time" content="2018-09-06T09:56:54.611Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="fpm源码解析准备【原创】">
-<meta name="twitter:description" content="之前看过网上零散的关于php-fpm分析的文章，要么不全，要么就是讲解php-fpm的配置文件的，还有就是讲解nginx与php-fpm之间通信配置的。关于php-fpm中的进程管理、信号管理、事件处理、时钟管理、请求处理等几乎为零。故本着学习的宗旨对fpm源码进行解读。本系列采用php-7.2.0版本中的php-fpm扩展进行分系列讲解。本系列共分为5节，具体如下：">
-<meta name="twitter:image" content="http://php.net/manual/zh/images/befd863081615f539082d9ff76bf7b39-zend.01-internal-structure.png">
+<meta name="twitter:title" content="fpm源码之初探【原创】">
+<meta name="twitter:description" content="本文在php-7.2.0版本下进行分析。主要介绍fpm目录文件，并介绍fpm入口文件。">
 
 
 
@@ -141,7 +138,7 @@
   };
 </script>
 
-  <title>fpm源码解析准备【原创】 | 风月</title>
+  <title>fpm源码之初探【原创】 | 风月</title>
   
 
 
@@ -239,7 +236,7 @@
           
           <li class="menu-item menu-item-tags">
     <a href="/tags/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">14</span></a>
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">16</span></a>
   </li>
         
         
@@ -247,7 +244,7 @@
           
           <li class="menu-item menu-item-archives">
     <a href="/archives/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">9</span></a>
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">10</span></a>
   </li>
         
         
@@ -323,7 +320,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">fpm源码解析准备【原创】
+          <h2 class="post-title" itemprop="name headline">fpm源码之初探【原创】
               
             
           </h2>
@@ -348,7 +345,7 @@
                 
               
 
-              <time title="创建时间：2018-07-23 00:00:00" itemprop="dateCreated datePublished" datetime="2018-07-23T00:00:00+08:00">2018-07-23</time>
+              <time title="创建时间：2018-07-24 00:00:00" itemprop="dateCreated datePublished" datetime="2018-07-24T00:00:00+08:00">2018-07-24</time>
             
 
             
@@ -365,7 +362,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-08-25 16:05:12" itemprop="dateModified" datetime="2018-08-25T16:05:12+08:00">2018-08-25</time>
+                <time title="修改时间：2018-09-06 17:56:54" itemprop="dateModified" datetime="2018-09-06T17:56:54+08:00">2018-09-06</time>
               
             
           </span>
@@ -416,89 +413,26 @@
       
 
       
-        <p>之前看过网上零散的关于php-fpm分析的文章，要么不全，要么就是讲解php-fpm的配置文件的，还有就是讲解nginx与php-fpm之间通信配置的。关于php-fpm中的进程管理、信号管理、事件处理、时钟管理、请求处理等几乎为零。故本着学习的宗旨对fpm源码进行解读。本系列采用php-7.2.0版本中的php-fpm扩展进行分系列讲解。本系列共分为5节，具体如下：</p>
+        <p>本文在php-7.2.0版本下进行分析。主要介绍fpm目录文件，并介绍fpm入口文件。</p>
 <a id="more"></a>
+<h1 id="1、fpm目录"><a href="#1、fpm目录" class="headerlink" title="1、fpm目录"></a>1、fpm目录</h1><p>fpm位于<code>php_src/sapi</code>目录下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── CREDITS //fpm名称和贡献者列表</span><br><span class="line">├── LICENSE //声明</span><br><span class="line">├── Makefile.frag //make时使用的文件</span><br><span class="line">├── config.m4 //构建fpm扩展的配置文件</span><br><span class="line">├── fpm //fpm源码目录</span><br><span class="line">├── init.d.php-fpm.in //fpm提供给init.d程序使用的配置</span><br><span class="line">├── php-fpm.8.in </span><br><span class="line">├── php-fpm.conf.in //fpm运行时的配置文件</span><br><span class="line">├── php-fpm.service.in //fpm提供给systemd管理时使用的配置</span><br><span class="line">├── status.html.in // fpm运行时状态查看页面</span><br><span class="line">├── tests //测试fpm的脚本</span><br><span class="line">└── www.conf.in //fpm运行时配置，这个主要是pool池配置管理</span><br></pre></td></tr></table></figure>
+<p>linux管理进程有两种常见方式，centOS7以下，基本采用init.d来管理操作系统的启动，而centOS7开始使用systemd来管理系统的启动，关于这两种启动方式，超出本文所讲述的范围，这里只给出相关链接。systemd，阮一峰老师的一篇文章，讲解的非常浅显易懂，<a href="http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html" target="_blank" rel="noopener">Systemd入门</a>。init这里没有找到比较好的，给出维基百科的解释。<a href="https://zh.wikipedia.org/wiki/Init" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/Init</a></p>
+<p>之所以要提及init和systemd，主要是在我们的fpm目录下，为这两个程序提供了相应的管理配置。具体配置这里不展开详述了，感兴趣的可以了解相关资料。</p>
+<h2 id="fpm目录"><a href="#fpm目录" class="headerlink" title="fpm目录"></a>fpm目录</h2><p>存放fpm源码的目录，fpm采用c语言编写，每个文件都是成对出现的，<code>.c</code>和<code>.h</code>文件，其详细结构如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">php-7.2.0/sapi/fpm</span><br><span class="line">.</span><br><span class="line">├── events //fpm事件处理相关源码</span><br><span class="line">│   ├── devpoll.c</span><br><span class="line">│   ├── devpoll.h</span><br><span class="line">│   ├── epoll.c</span><br><span class="line">│   ├── epoll.h</span><br><span class="line">│   ├── kqueue.c</span><br><span class="line">│   ├── kqueue.h</span><br><span class="line">│   ├── poll.c</span><br><span class="line">│   ├── poll.h</span><br><span class="line">│   ├── port.c</span><br><span class="line">│   ├── port.h</span><br><span class="line">│   ├── select.c</span><br><span class="line">│   └── select.h</span><br><span class="line">├── fpm.c //fpm主程序实现</span><br><span class="line">├── fpm.h //fpm主程序头文件</span><br><span class="line">├── fpm_arrays.h //fpm数组相关</span><br><span class="line">├── fpm_atomic.h //fpm原子操作相关</span><br><span class="line">├── fpm_children.c //fpm子进程相关</span><br><span class="line">├── fpm_children.h </span><br><span class="line">├── fpm_cleanup.c </span><br><span class="line">├── fpm_cleanup.h //fpm内存清理</span><br><span class="line">├── fpm_clock.c</span><br><span class="line">├── fpm_clock.h //fpm时钟管理</span><br><span class="line">├── fpm_conf.c</span><br><span class="line">├── fpm_conf.h //fpm运行时配置解析，包括运行方式、进程池等的配置</span><br><span class="line">├── fpm_config.h //fpm计数器配置</span><br><span class="line">├── fpm_env.c</span><br><span class="line">├── fpm_env.h //fpm环境变量</span><br><span class="line">├── fpm_events.c</span><br><span class="line">├── fpm_events.h //fpm事件处理相关</span><br><span class="line">├── fpm_log.c</span><br><span class="line">├── fpm_log.h //fpm日志相关</span><br><span class="line">├── fpm_main.c //fpm入口文件</span><br><span class="line">├── fpm_php.c</span><br><span class="line">├── fpm_php.h //fpm中php与zend的中间交互</span><br><span class="line">├── fpm_php_trace.c</span><br><span class="line">├── fpm_php_trace.h //fpm执行栈</span><br><span class="line">├── fpm_process_ctl.c</span><br><span class="line">├── fpm_process_ctl.h //fpm进程控制</span><br><span class="line">├── fpm_request.c </span><br><span class="line">├── fpm_request.h //fpm请求处理</span><br><span class="line">├── fpm_scoreboard.c</span><br><span class="line">├── fpm_scoreboard.h //fpm的计数器，主要用于管理work</span><br><span class="line">├── fpm_shm.c</span><br><span class="line">├── fpm_shm.h //fpm共享内存分配处理</span><br><span class="line">├── fpm_signals.c</span><br><span class="line">├── fpm_signals.h //fpm信号处理</span><br><span class="line">├── fpm_sockets.c </span><br><span class="line">├── fpm_sockets.h //fpm套接字处理</span><br><span class="line">├── fpm_status.c</span><br><span class="line">├── fpm_status.h //fpm状态管理</span><br><span class="line">├── fpm_stdio.c</span><br><span class="line">├── fpm_stdio.h //fpm输入输出管理</span><br><span class="line">├── fpm_str.h //fpm字符串复制</span><br><span class="line">├── fpm_systemd.c </span><br><span class="line">├── fpm_systemd.h //fpm与systemd通信管理</span><br><span class="line">├── fpm_trace.c</span><br><span class="line">├── fpm_trace.h //fpm调用栈相关</span><br><span class="line">├── fpm_trace_mach.c //fpm master进程检测相关</span><br><span class="line">├── fpm_trace_pread.c //fpm进程状态检测相关</span><br><span class="line">├── fpm_trace_ptrace.c</span><br><span class="line">├── fpm_unix.c</span><br><span class="line">├── fpm_unix.h //处理unix文件系统相关</span><br><span class="line">├── fpm_worker_pool.c</span><br><span class="line">├── fpm_worker_pool.h //fpm 工作进程池相关</span><br><span class="line">├── zlog.c</span><br><span class="line">└── zlog.h //fpm日志记录</span><br></pre></td></tr></table></figure>
+<h2 id="fpm入口程序"><a href="#fpm入口程序" class="headerlink" title="fpm入口程序"></a>fpm入口程序</h2><p><strong>FPM(FastCGI Process Manager)</strong>是PHP FastCGI运行模式的一个进程管理器，从它的定义可以看出，FPM的核心功能是进程管理，那么它用来管理什么进程呢？接下来我们将从入口程序开始，一点一点揭开其神秘面纱。分析一个程序，找准入口是关键，找到入口后根据主脉络往下捋即可。按照这样的指导思想，那我们就开始吧。</p>
+<p><strong>php_src/sapi/fpm/fpm/fpm_main.c：</strong>fpm入口程序，找到main入口函数，我们先来看下fpm启动执行的主要流程：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//注册SAPI:将全局变量sapi_module设置为cgi_sapi_module</span></span><br><span class="line">    sapi_startup(&amp;cgi_sapi_module);</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//执行php_module_starup()</span></span><br><span class="line">    <span class="keyword">if</span> (cgi_sapi_module.startup(&amp;cgi_sapi_module) == FAILURE) &#123;</span><br><span class="line">        <span class="keyword">return</span> FPM_EXIT_SOFTWARE;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//初始化</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="number">0</span> &gt; fpm_init(...))&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    fpm_is_running = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    fcgi_fd = fpm_run(&amp;max_requests);<span class="comment">//后面都是worker进程的操作，master进程不会走到下面，因为在fpm_run中已经根据work_pool进行子进程fork了</span></span><br><span class="line">    parent = <span class="number">0</span>;</span><br><span class="line">    ...</span><br><span class="line">	request = fpm_init_request(fcgi_fd);<span class="comment">//初始化请求，开辟内存空间、设置请求相关的环境变量、绑定socket等</span></span><br><span class="line">	zend_first_try &#123;<span class="comment">//开始一个try</span></span><br><span class="line">        <span class="keyword">while</span> (EXPECTED(fcgi_accept_request(request) &gt;= <span class="number">0</span>)) &#123;<span class="comment">//阻塞等待请求到来，关于fpm如何接受请求，后面会有文章专门讲解</span></span><br><span class="line">            ...</span><br><span class="line">            init_request_info();<span class="comment">//初始化请求结构，包括PATH_INFO、SCRIPT_NAME、REQUEST_URI、SCRIPT_FILENAME等</span></span><br><span class="line">            fpm_request_info();<span class="comment">//将cgi中的请求信息复制到fpm请求中</span></span><br><span class="line">            php_request_startup()<span class="comment">//php请求处理开始</span></span><br><span class="line">            fpm_status_handle_request()<span class="comment">//处理fpm启动后状态检测，如果状态不太对，就跳过后面的处理，结束请求</span></span><br><span class="line">            ...</span><br><span class="line">            php_fopen_primary_script(&amp;file_handle)<span class="comment">//</span></span><br><span class="line"></span><br><span class="line">            ...</span><br><span class="line">            fpm_request_executing();<span class="comment">//请求执行</span></span><br><span class="line">            php_execute_script(&amp;file_handle);<span class="comment">//执行脚本</span></span><br><span class="line">            ...</span><br><span class="line">            fpm_request_end();<span class="comment">//请求执行结束</span></span><br><span class="line">            php_request_shutdown((<span class="keyword">void</span> *) <span class="number">0</span>);<span class="comment">//请求关闭</span></span><br><span class="line">            ...</span><br><span class="line">            requests++;</span><br><span class="line">            <span class="keyword">if</span> (UNEXPECTED(max_requests &amp;&amp; (requests == max_requests))) &#123;<span class="comment">//判断一个子进程处理的请求数，如果达到处理上线就光荣退出</span></span><br><span class="line">                fcgi_request_set_keep(request, <span class="number">0</span>);</span><br><span class="line">                fcgi_finish_request(request, <span class="number">0</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            ...</span><br><span class="line">    	&#125;</span><br><span class="line">        fcgi_destroy_request(request);<span class="comment">//销毁fpm请求</span></span><br><span class="line">		fcgi_shutdown();<span class="comment">//fcgi关闭</span></span><br><span class="line">	&#125; zend_catch &#123;</span><br><span class="line">		exit_status = FPM_EXIT_SOFTWARE;</span><br><span class="line">	&#125; zend_end_try();</span><br><span class="line">    </span><br><span class="line">    php_module_shutdown();<span class="comment">//关闭模块</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> exit_status;<span class="comment">//进程退出</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>总结一些入口文件干的事情：</p>
 <ol>
-<li><a href="/2018/07/23/fpm源码之初探">fpm源码之初探</a></li>
-<li><a href="/2018/07/23/fpm源码之配置解析">fpm源码之配置解析</a></li>
-<li><a href="/2018/07/23/fpm源码之进程管理">fpm源码之进程管理</a></li>
-<li><a href="/2018/07/23/fpm源码之信号处理">fpm源码之信号处理</a></li>
-<li><a href="/2018/07/23/fpm源码之事件管理">fpm源码之事件管理</a></li>
-<li><a href="/2018/07/23/fpm源码之请求处理">fpm源码之请求处理</a></li>
+<li>初始化数据结构</li>
+<li>解析命令行参数</li>
+<li>初始化fpm_init</li>
+<li>执行fpm_run</li>
+<li>启动监听端口并处理请求（此处主进程是不会走到的）</li>
 </ol>
-<p>源码地址：<a href="https://github.com/php/php-src" target="_blank" rel="noopener">https://github.com/php/php-src</a></p>
-<h2 id="源码查看工具"><a href="#源码查看工具" class="headerlink" title="源码查看工具"></a>源码查看工具</h2><p>sublime+vim</p>
-<h2 id="什么是-Zend-什么是-PHP"><a href="#什么是-Zend-什么是-PHP" class="headerlink" title="什么是 Zend ? 什么是 PHP ?"></a>什么是 Zend ? 什么是 PHP ?</h2><p><em>Zend</em>是语言引擎，PHP内核。PHP是从外层展现的完整系统。咋一听似乎有点模糊不清，但是其实并不复杂，为了实现一个 web 脚本解释器，你需要三个部分：</p>
-<ol>
-<li>第一：<strong>解释器部分</strong> 分析输入代码，翻译代码，然后执行代码。</li>
-<li>第二：<strong>功能部分</strong> 完成语言的功能（函数，等等）。</li>
-<li>第三：<strong>接口部分</strong> 与web通信</li>
-</ol>
-<p><img src="http://php.net/manual/zh/images/befd863081615f539082d9ff76bf7b39-zend.01-internal-structure.png" alt="img"></p>
-<h2 id="组成扩展的文件"><a href="#组成扩展的文件" class="headerlink" title="组成扩展的文件"></a>组成扩展的文件</h2><p>经过上面的复习，我们知道PHP由三部分组成，其中最容易扩展的就是modules部分，而fpm也是以php扩展的形式存在的，那么在开始讲解fpm源码之前，我简单介绍下php扩展。这里参考的是<a href="http://php.net/manual/zh/internals2.structure.php" target="_blank" rel="noopener">官方文档</a></p>
-<p>不管通过什么方式创建的扩展，都至少包含以下四个文件：</p>
-<p><strong>config.m4</strong></p>
-<pre><code>unix构建系统配置 [参考](http://php.net/manual/zh/internals2.buildsys.configunix.php)
-</code></pre><p><strong>config.w32</strong></p>
-<pre><code>windows构建系统配置
-</code></pre><p><strong>php_xxx.h</strong></p>
-<pre><code>xxx为扩展名字，当将扩展作为静态模块构建并放入PHP二进制包时，构建系统会要求用php_加扩展的名称命名的头文件包含一个对扩展模块结构的指针定义。就像其他头文件，此文件经常包含附加的宏、原型和全局变量。
-</code></pre><p><strong>xxx.c</strong></p>
-<pre><code>主要的扩展源文件。按惯例，此文件名就是扩展的名称，比如这里的xxx，但不是必需的。此文件包含模块结构定义、INI条目、管理函数、用户空间函数和其他扩展所需的内容。
-</code></pre><p>扩展应包含任意数量的头文件、源文件、单元测试和其他支持文件。此四个文件仅够组成最小的扩展。</p>
-<p>比如通过php源文件中<code>$path/php-7.2.0/ext/ext_skel</code>命令生成的xxx扩展，其目录如下：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── CREDITS //纯文本格式列出了扩展的贡献者和（或 ）维护者</span><br><span class="line">├── EXPERIMENTAL</span><br><span class="line">├── config.m4</span><br><span class="line">├── config.w32</span><br><span class="line">├── php_xxx.h</span><br><span class="line">├── tests //测试扩展的测试文件，php扩展使用php来测试</span><br><span class="line">│   └── 001.phpt</span><br><span class="line">├── xxx.c</span><br><span class="line">└── xxx.php</span><br></pre></td></tr></table></figure>
-<p>其中<strong>xxx.php</strong>内容如下，主要用于测试扩展：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$br = (php_sapi_name() == <span class="string">"cli"</span>)? <span class="string">""</span>:<span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(!extension_loaded(<span class="string">'xxx'</span>)) &#123;</span><br><span class="line">	dl(<span class="string">'xxx.'</span> . PHP_SHLIB_SUFFIX);</span><br><span class="line">&#125;</span><br><span class="line">$module = <span class="string">'xxx'</span>;</span><br><span class="line">$functions = get_extension_funcs($module);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"Functions available in the test extension:$br\n"</span>;</span><br><span class="line"><span class="keyword">foreach</span>($functions <span class="keyword">as</span> $func) &#123;</span><br><span class="line">    <span class="keyword">echo</span> $func.<span class="string">"$br\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"$br\n"</span>;</span><br><span class="line">$function = <span class="string">'confirm_'</span> . $module . <span class="string">'_compiled'</span>;</span><br><span class="line"><span class="keyword">if</span> (extension_loaded($module)) &#123;</span><br><span class="line">	$str = $function($module);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">	$str = <span class="string">"Module $module is not compiled into PHP"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"$str\n"</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<h2 id="C语言基础知识复习"><a href="#C语言基础知识复习" class="headerlink" title="C语言基础知识复习"></a>C语言基础知识复习</h2><h3 id="extern"><a href="#extern" class="headerlink" title="extern"></a>extern</h3><p>用在变量或函数的声明前，用来说明”此变量/函数是在别处定义的，要在此处引用”。</p>
-<p>对变量而言，变量的声明有两种情况：</p>
-<p>1、 一种是需要建立存储空间的，不用加extern；</p>
-<p>2、另一种是不需要建立存储空间，需要加extern 。如果你想在本源文件中使用另一个源文件的变量，就需要在使用前用extern声明该变量，或者在头文件中用extern声明该变量；</p>
-<p>举例：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="keyword">int</span> a;<span class="comment">//声明一个全局变量a</span></span><br><span class="line"><span class="keyword">int</span> a; <span class="comment">//定义一个全局变量a</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">int</span> a =<span class="number">0</span> ;<span class="comment">//定义一个全局变量a 并给初值</span></span><br><span class="line"><span class="keyword">int</span> a =<span class="number">0</span>;<span class="comment">//定义一个全局变量a,并给初值</span></span><br></pre></td></tr></table></figure>
-<p>注意变量定义智能出现在一处，而外部引用声明可以出现多次。</p>
-<p>对函数而言，如果你想在本源文件中使用另一个源文件的函数，就需要在使用前用声明该函数，声明函数加不加extern都没关系，所以在头文件中函数可以不用加extern。</p>
-<h3 id="memset"><a href="#memset" class="headerlink" title="memset"></a>memset</h3><p><strong>内存申请并初始化函数</strong>：将s所指向的某一块内存中的后n个字节的内容全部设置为ch指定的ASCII值，第一个值为指定的内存地址，块的大小由第三个参数决定。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">memset</span><span class="params">(<span class="keyword">void</span> *s, <span class="keyword">int</span> ch, <span class="keyword">size_t</span> n)</span></span>;</span><br></pre></td></tr></table></figure>
-<h3 id="malloc"><a href="#malloc" class="headerlink" title="malloc"></a>malloc</h3><p><strong>动态内存分配：</strong>全称是memory allocation，用于申请一块连续的指定大小的内存块区域以<code>void*</code>类型返回分配的内存区域地址。其中<code>void*</code>表示未确定类型的指针。其可以通过类型转换强制转换为任何其他类型的指针。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> size)</span></span>;</span><br></pre></td></tr></table></figure>
-<h3 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h3><p><strong>指针是程序数据在内存中的地址，而指针变量是用来保存这些地址的变量。</strong></p>
-<p>我们指知道：C语言中的数组是指 一类 类型，数组具体区分为  int 类型数组，double类型数组,char数组 等等。同样指针 这个概念也泛指 一类 数据类型，int指针类型，double指针类型，char指针类型等等。</p>
-<p>通常，我们用int类型保存一些整型的数据，如 int num = 97 ， 我们也会用char来存储字符： char ch = ‘a’。</p>
-<p>我们也必须知道：任何程序数据载入内存后，在内存都有他们的地址，这就是指针。而为了保存一个数据在内存中的地址，我们就需要指针变量。</p>
-<h3 id="void-类型指针"><a href="#void-类型指针" class="headerlink" title="void *类型指针"></a>void *类型指针</h3><p>由于void是空类型，因此<code>void *</code>类型的指针只保存了指针的值，而丢失了类型信息，我们不知道他指向的数据是什么类型的，只指定这个数据在内存中的起始地址，如果想要完整的提取指向的数据，程序员就必须对这个指针做出正确的类型转换，然后再解指针。因为，编译器不允许直接对<code>void *</code>类型的指针做解指针操作。</p>
-<h3 id="struct"><a href="#struct" class="headerlink" title="struct"></a>struct</h3><p>struct为结构体关键字，tag为结构体的标志，member-list为结构体成员列表，其必须列出其所有成员；variable-list为此结构体声明的变量。结构体的2种定义方式：</p>
-<p><strong>常规定义</strong></p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Student</span> //结构体定义</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">char</span> 	name[<span class="number">20</span>];</span><br><span class="line">	<span class="keyword">int</span> 	age;</span><br><span class="line">	<span class="keyword">int</span>		score[<span class="number">5</span>];</span><br><span class="line">&#125;；</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Student</span> <span class="title">s1</span> = &#123;</span><span class="string">"zhangsan"</span>,<span class="number">22</span>,&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">10</span>&#125;&#125;; <span class="comment">//结构体变量声明并初始化</span></span><br></pre></td></tr></table></figure>
-<p><strong>尾部定义</strong></p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">char</span>		name[<span class="number">10</span>];</span><br><span class="line">	<span class="keyword">int</span>		age;</span><br><span class="line">	<span class="keyword">int</span>		score[<span class="number">5</span>];</span><br><span class="line">&#125;stu1 = &#123;<span class="string">"张三"</span>,<span class="number">20</span>,&#123;<span class="number">150</span>,<span class="number">110</span>,<span class="number">20</span>,<span class="number">34</span>,<span class="number">114</span>&#125;&#125;，stu2; <span class="comment">//匿名结构体定义时声明变量并初始化</span></span><br></pre></td></tr></table></figure>
-<h3 id="static"><a href="#static" class="headerlink" title="static"></a>static</h3><p><strong>1. static全局变量</strong></p>
-<p>我们知道，一个进程在内存中的布局如图所示：</p>
-<p><img src="https://ws3.sinaimg.cn/large/006tKfTcly1ftl178ha0pj305o0iyt8t.jpg" alt=""></p>
-<pre><code>其中.text段保存进程所执行的程序二进制文件，.data段保存进程所有的已初始化的全局变量，.bss段保存进程未初始化的全局变量（其他段中还有很多乱七八糟的段，暂且不表）。在进程的整个生命周期中，.data段和.bss段内的数据时跟整个进程同生共死的，也就是在进程结束之后这些数据才会寿终就寝。
-
-当一个进程的全局变量被声明为static之后，它的中文名叫**静态全局变量**。静态全局变量和其他的全局变量的存储地点并没有区别，都是在.data段（已初始化）或者.bss段（未初始化）内，但是**它只在定义它的源文件内有效，其他源文件无法访问它**。所以，普通全局变量穿上static外衣后，它就变成了新娘，已心有所属，只能被定义它的源文件（新郎）中的变量或函数访问。
-</code></pre><p>普通的局部变量在栈空间上分配，这个局部变量所在的函数被多次调用时，每次调用这个局部变量在栈上的位置都不一定相同。局部变量也可以在堆上动态分配，但是记得使用完这个堆空间后要释放之。</p>
-<p><strong>2. 静态局部变量</strong></p>
-<p>static局部变量中文名叫<strong>静态局部变量</strong>。它与普通的局部变量比起来有如下几个区别：</p>
-<pre><code>1）**位置**：静态局部变量被编译器放在全局存储区.data（注意：不在.bss段内，原因见3）），所以它虽然是局部的，但是在程序的整个生命周期中存在。
-
-     2）**访问权限：**静态局部变量只能被其作用域内的变量或函数访问。也就是说虽然它会在程序的整个生命周期中存在，由于它是static的，它不能被其他的函数和源文件访问。
-
-     3）**值：**静态局部变量如果没有被用户初始化，则会被编译器自动赋值为0，以后每次调用静态局部变量的时候都用上次调用后的值。这个比较好理解，每次函数调用静态局部变量的时候都修改它然后离开，下次读的时候从全局存储区读出的静态局部变量就是上次修改后的值。
-</code></pre><p><strong>3. 私有函数</strong></p>
-<pre><code>当你的程序中有很多个源文件的时候，你肯定会让某个源文件只提供一些外界需要的接口，其他的函数可能是为了实现这些接口而编写，这些其他的函数你可能并不希望被外界（非本源文件）所看到，这时候就可以用static修饰这些“其他的函数”。
-</code></pre><p><strong>所以static函数的作用域是本源文件，把它想象为面向对象中的private函数就可以了。</strong></p>
-<h2 id="PHP源码知识"><a href="#PHP源码知识" class="headerlink" title="PHP源码知识"></a>PHP源码知识</h2><h3 id="宏（Macro）"><a href="#宏（Macro）" class="headerlink" title="宏（Macro）"></a>宏（Macro）</h3><p>计算机科学里的宏是一种抽象（Abstraction），它根据一系列预定义的规则替换一定的文本模式。解释器或编译器在遇到宏时会自动进行这一模式替换。关于宏的详细解释，可以参考<a href="https://blog.csdn.net/hanchaoman/article/details/8809951/" target="_blank" rel="noopener">这里</a></p>
-<p>PHP源码中大量的使用宏定义，知道以下几个宏，能够帮助我们更好的理解PHP源码。</p>
-<p><strong>EG宏：</strong>存在于zend_globals_macros.h中，zend执行器相关的全局变量executor_globals，源码如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Executor */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> ZTS</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> EG(v) ZEND_TSRMG(executor_globals_id, zend_executor_globals *, v)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> EG(v) (executor_globals.v)</span></span><br><span class="line"><span class="keyword">extern</span> ZEND_API zend_executor_globals executor_globals;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-<p><strong>CG宏：</strong>存在于zend_globals_macros.h中，zend编译器相关的全局变量compiler_globals，源码如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> ZTS</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> CG(v) ZEND_TSRMG(compiler_globals_id, zend_compiler_globals *, v)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> CG(v) (compiler_globals.v)</span></span><br><span class="line"><span class="keyword">extern</span> ZEND_API <span class="class"><span class="keyword">struct</span> _<span class="title">zend_compiler_globals</span> <span class="title">compiler_globals</span>;</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="function">ZEND_API <span class="keyword">int</span> <span class="title">zendparse</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
-<p><strong>PHP-named Zend macro wrappers：</strong> 位于php.h文件中</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PHP_FN					ZEND_FN</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PHP_MN					ZEND_MN</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PHP_NAMED_FUNCTION		ZEND_NAMED_FUNCTION</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PHP_FUNCTION			ZEND_FUNCTION</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PHP_METHOD  			ZEND_METHOD</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PHP_FE					ZEND_FE</span></span><br></pre></td></tr></table></figure>
-<p><strong>Zend 宏定义：</strong>位于zend_API.h文件中</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZEND_FN(name) zif_##name</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZEND_MN(name) zim_##name</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZEND_NAMED_FUNCTION(name)		void name(INTERNAL_FUNCTION_PARAMETERS)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZEND_FUNCTION(name)				ZEND_NAMED_FUNCTION(ZEND_FN(name))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZEND_METHOD(classname, name)	ZEND_NAMED_FUNCTION(ZEND_MN(classname##_##name))</span></span><br></pre></td></tr></table></figure>
+<p>下面一篇文章将会讲解fpm的进程是如何管理的</p>
 
       
     </div>
@@ -520,7 +454,7 @@
     <strong>本文作者： </strong>风月</li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://xwxz.github.io/php-fpm-01/" title="fpm源码解析准备【原创】">http://xwxz.github.io/php-fpm-01/</a>
+    <a href="http://xwxz.github.io/php-fpm-01/" title="fpm源码之初探【原创】">http://xwxz.github.io/php-fpm-01/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
@@ -550,8 +484,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/c-pointer-01/" rel="next" title="C语言指针详解【转载】">
-                <i class="fa fa-chevron-left"></i> C语言指针详解【转载】
+              <a href="/php-fpm/" rel="next" title="fpm源码解析准备【原创】">
+                <i class="fa fa-chevron-left"></i> fpm源码解析准备【原创】
               </a>
             
           </div>
@@ -560,8 +494,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/php-fpm-02/" rel="prev" title="fpm源码之初探【原创】">
-                fpm源码之初探【原创】 <i class="fa fa-chevron-right"></i>
+              <a href="/php-fpm-02/" rel="prev" title="fpm源码之配置解析">
+                fpm源码之配置解析 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -641,7 +575,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -672,7 +606,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">9</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
                     <span class="site-state-item-name">分类</span>
                   
                 </div>
@@ -713,7 +651,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">14</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -784,7 +726,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#源码查看工具"><span class="nav-text">源码查看工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是-Zend-什么是-PHP"><span class="nav-text">什么是 Zend ? 什么是 PHP ?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#组成扩展的文件"><span class="nav-text">组成扩展的文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C语言基础知识复习"><span class="nav-text">C语言基础知识复习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#extern"><span class="nav-text">extern</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#memset"><span class="nav-text">memset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#malloc"><span class="nav-text">malloc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#指针"><span class="nav-text">指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#void-类型指针"><span class="nav-text">void *类型指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#struct"><span class="nav-text">struct</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#static"><span class="nav-text">static</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PHP源码知识"><span class="nav-text">PHP源码知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#宏（Macro）"><span class="nav-text">宏（Macro）</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1、fpm目录"><span class="nav-text">1、fpm目录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#fpm目录"><span class="nav-text">fpm目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fpm入口程序"><span class="nav-text">fpm入口程序</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -804,7 +746,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love" id="animate">
     <i class="fa fa-user"></i>
   </span>
