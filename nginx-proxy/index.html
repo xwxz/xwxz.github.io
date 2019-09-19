@@ -108,22 +108,22 @@
 
 
 
-  <meta name="description" content="最近项目中使用到nginx的反向代理，这里整理记录一番。官方文档地址。 为何代理正向代理（forward proxy）：是一个位于客户端和目标服务器之间的服务器(代理服务器)，为了从目标服务器取得内容，客户端向代理服务器发送一个请求并指定目标，然后代理服务器向目标服务器转交请求并将获得的内容返回给客户端。 有时候，用户想要访问某国外网站，该网站无法在国内直接访问，但是我们可以访问到一个代理服务器，">
-<meta name="keywords" content="nginx">
+  <meta name="description" content="最近项目中使用到nginx的反向代理，之前也一直听过nginx的反向代理，但一直没有去详细了解，机会来啦就要抓住，本篇文章将从何为代理到nginx反向代理到最后主要配置指令的详细说明为顺序展开讲解～">
+<meta name="keywords" content="nginx,proxy">
 <meta property="og:type" content="article">
 <meta property="og:title" content="nginx之proxy">
-<meta property="og:url" content="/uncategorized/index.html">
+<meta property="og:url" content="/nginx-proxy/index.html">
 <meta property="og:site_name" content="风月">
-<meta property="og:description" content="最近项目中使用到nginx的反向代理，这里整理记录一番。官方文档地址。 为何代理正向代理（forward proxy）：是一个位于客户端和目标服务器之间的服务器(代理服务器)，为了从目标服务器取得内容，客户端向代理服务器发送一个请求并指定目标，然后代理服务器向目标服务器转交请求并将获得的内容返回给客户端。 有时候，用户想要访问某国外网站，该网站无法在国内直接访问，但是我们可以访问到一个代理服务器，">
+<meta property="og:description" content="最近项目中使用到nginx的反向代理，之前也一直听过nginx的反向代理，但一直没有去详细了解，机会来啦就要抓住，本篇文章将从何为代理到nginx反向代理到最后主要配置指令的详细说明为顺序展开讲解～">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="/uncategorized/正向代理.png">
-<meta property="og:image" content="/uncategorized/反向代理.png">
-<meta property="og:image" content="/uncategorized/二级代理.png">
-<meta property="og:updated_time" content="2019-09-19T10:31:31.129Z">
+<meta property="og:image" content="/nginx-proxy/正向代理.png">
+<meta property="og:image" content="/nginx-proxy/反向代理.png">
+<meta property="og:image" content="/nginx-proxy/二级代理.png">
+<meta property="og:updated_time" content="2019-09-19T10:43:17.461Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="nginx之proxy">
-<meta name="twitter:description" content="最近项目中使用到nginx的反向代理，这里整理记录一番。官方文档地址。 为何代理正向代理（forward proxy）：是一个位于客户端和目标服务器之间的服务器(代理服务器)，为了从目标服务器取得内容，客户端向代理服务器发送一个请求并指定目标，然后代理服务器向目标服务器转交请求并将获得的内容返回给客户端。 有时候，用户想要访问某国外网站，该网站无法在国内直接访问，但是我们可以访问到一个代理服务器，">
-<meta name="twitter:image" content="/uncategorized/正向代理.png">
+<meta name="twitter:description" content="最近项目中使用到nginx的反向代理，之前也一直听过nginx的反向代理，但一直没有去详细了解，机会来啦就要抓住，本篇文章将从何为代理到nginx反向代理到最后主要配置指令的详细说明为顺序展开讲解～">
+<meta name="twitter:image" content="/nginx-proxy/正向代理.png">
 
 
 
@@ -132,7 +132,7 @@
 
 
 
-  <link rel="canonical" href="/uncategorized/"/>
+  <link rel="canonical" href="/nginx-proxy/"/>
 
 
 
@@ -240,7 +240,7 @@
           
           <li class="menu-item menu-item-tags">
     <a href="/tags/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">17</span></a>
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">18</span></a>
   </li>
         
         
@@ -307,7 +307,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="/uncategorized/">
+    <link itemprop="mainEntityOfPage" href="/nginx-proxy/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="风月">
@@ -366,11 +366,29 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-09-19 18:31:31" itemprop="dateModified" datetime="2019-09-19T18:31:31+08:00">2019-09-19</time>
+                <time title="修改时间：2019-09-19 18:43:17" itemprop="dateModified" datetime="2019-09-19T18:43:17+08:00">2019-09-19</time>
               
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/nginx-proxy/" itemprop="url" rel="index"><span itemprop="name">nginx/proxy</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -399,11 +417,11 @@
       
 
       
-        <p>最近项目中使用到nginx的反向代理，这里整理记录一番。官方<a href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html" target="_blank" rel="noopener">文档地址</a>。</p>
+        <p>最近项目中使用到nginx的反向代理，之前也一直听过nginx的反向代理，但一直没有去详细了解，机会来啦就要抓住，本篇文章将从何为代理到nginx反向代理到最后主要配置指令的详细说明为顺序展开讲解～</p>
+<a id="more"></a>
 <h2 id="为何代理"><a href="#为何代理" class="headerlink" title="为何代理"></a>为何代理</h2><p><strong>正向代理（forward proxy）</strong>：是一个位于客户端和目标服务器之间的服务器(代理服务器)，为了从目标服务器取得内容，客户端向代理服务器发送一个请求并指定目标，然后代理服务器向目标服务器转交请求并将获得的内容返回给客户端。</p>
 <p>有时候，用户想要访问某国外网站，该网站无法在国内直接访问，但是我们可以访问到一个代理服务器，这个代理服务器可以访问到这个国外网站。这样呢，用户对该国外网站的访问就需要通过代理服务器来转发请求，并且该代理服务器也会将请求的响应再返回给用户。这个上网的过程就是用到了正向代理。</p>
-<a id="more"></a>
-<p><img src="/uncategorized/正向代理.png" alt="正向代理"></p>
+<p><img src="/nginx-proxy/正向代理.png" alt="正向代理"></p>
 <p><strong>正向代理，其实是”代理服务器”代理了”客户端”，去和”目标服务器”进行交互。</strong></p>
 <p>正向代理的用途：</p>
 <p>1）突破访问限制</p>
@@ -411,7 +429,7 @@
 <p>3）隐藏客户端真实IP</p>
 <p><strong>反向代理（reverse proxy）</strong>：是指以代理服务器来接受internet上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给internet上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。通过反向代理服务器访问目标服务器时，客户端是不知道真正的目标服务器是谁的，甚至不知道自己访问的是一个代。</p>
 <p>用的最多的就是负载均衡，提供web服务的服务器不止一台，一般是一个集群，此时就需要一台统一对外的代理服务器来接收转发相应请求到后端真正处理请求的web服务器上。这个代理服务器一般也叫负载均衡服务器。</p>
-<p><img src="/uncategorized/反向代理.png" alt="反向代理"></p>
+<p><img src="/nginx-proxy/反向代理.png" alt="反向代理"></p>
 <p><strong>反向代理，其实是”代理服务器”代理了”目标服务器”，去和”客户端”进行交互。</strong></p>
 <p>反向代理用途：</p>
 <p>1）隐藏真实服务器IP（一般负载均衡会提供VIP）</p>
@@ -437,16 +455,16 @@
 <li>fail_timeout : max_fails次失败后，暂停的时间。</li>
 <li>backup： 其它所有的非backup机器down或者忙的时候，请求backup机器。所以这台机器压力会最轻。</li>
 </ul>
-<h2 id="配置指令详解"><a href="#配置指令详解" class="headerlink" title="配置指令详解"></a>配置指令详解</h2><h3 id="proxy-pass"><a href="#proxy-pass" class="headerlink" title="proxy_pass"></a>proxy_pass</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Syntax:	proxy_pass URL;</span><br><span class="line">Default:	—</span><br><span class="line">Context:	location, if in location, limit_except</span><br></pre></td></tr></table></figure>
+<h2 id="配置指令详解"><a href="#配置指令详解" class="headerlink" title="配置指令详解"></a>配置指令详解</h2><h3 id="proxy-pass"><a href="#proxy-pass" class="headerlink" title="proxy_pass"></a>proxy_pass</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Syntax:   proxy_pass URL;</span><br><span class="line">Default:  —</span><br><span class="line">Context:  location, if in location, limit_except</span><br></pre></td></tr></table></figure>
 <p>此指令用于指定web后端服务地址，设置协议、地址和可选URI，格式为：协议(http|https)://+地址+(/URI)，其中地址可以为域名、IP、IP:PORT、Unix Domain Socket以及server group，举个🌰：</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#示例1:域名+端口</span></span><br><span class="line"><span class="attribute">location</span> / &#123;</span><br><span class="line">    <span class="attribute">proxy_pass</span> http://localhost:8000;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#示例2: Unix Domain Socket,这里的domain需要以 "unix:" 开头，以 ":" 结束</span></span><br><span class="line"><span class="attribute">location</span> / &#123;</span><br><span class="line">		<span class="attribute">proxy_pass</span> http://unix:/tmp/backend.socket:/uri/;  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#示例3: 地址为server group</span></span><br><span class="line"><span class="attribute">upstream</span> backend &#123;</span><br><span class="line">    <span class="attribute">server</span> backend1.example.com       weight=<span class="number">5</span>;</span><br><span class="line">    <span class="attribute">server</span> backend2.example.com:<span class="number">8080</span>;</span><br><span class="line">    <span class="attribute">server</span> unix:/tmp/backend3;</span><br><span class="line">    <span class="attribute">server</span> backup1.example.com:<span class="number">8080</span>   backup;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://backend;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#示例1:域名+端口</span></span><br><span class="line"><span class="attribute">location</span> / &#123;</span><br><span class="line">    <span class="attribute">proxy_pass</span> http://localhost:8000;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#示例2: Unix Domain Socket,这里的domain需要以 "unix:" 开头，以 ":" 结束</span></span><br><span class="line"><span class="attribute">location</span> / &#123;</span><br><span class="line">    <span class="attribute">proxy_pass</span> http://unix:/tmp/backend.socket:/uri/;  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#示例3: 地址为server group</span></span><br><span class="line"><span class="attribute">upstream</span> backend &#123;</span><br><span class="line">    <span class="attribute">server</span> backend1.example.com       weight=<span class="number">5</span>;</span><br><span class="line">    <span class="attribute">server</span> backend2.example.com:<span class="number">8080</span>;</span><br><span class="line">    <span class="attribute">server</span> unix:/tmp/backend3;</span><br><span class="line">    <span class="attribute">server</span> backup1.example.com:<span class="number">8080</span>   backup;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://backend;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>如果domain被解析为多个地址，这些地址将被循环使用，这可以实现负载均衡了。</p>
 <h4 id="关于URI"><a href="#关于URI" class="headerlink" title="关于URI"></a>关于URI</h4><p>针对设置了URI的情况，原始请求的URI中匹配上location的部分，将被设置中的URI替换，举个🌰：原始URL为 <code>http://domain/proxy/index.html</code> 代理设置的URI为<code>/aaa/</code>，则原URI中的<code>/proxy/</code>将被替换为<code>/aaa/</code>：</p>
 <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 匹配/proxy/ "/proxy/" 将被 "/aaa/"替换</span></span><br><span class="line"><span class="attribute">location</span> /proxy/ &#123;</span><br><span class="line">    <span class="attribute">proxy_pass</span> http://127.0.0.1/aaa/;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 最终代理到URL：http://127.0.0.1/aaa/test.html</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#相对于前一种，最后少一个 / ）</span></span><br><span class="line"><span class="attribute">location</span> /proxy/ &#123;</span><br><span class="line">    <span class="attribute">proxy_pass</span> http://127.0.0.1/aaa;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">#代理到URL：http://127.0.0.1/aaatest.html</span></span><br></pre></td></tr></table></figure>
 <p><strong>所以，只要设置了uri，则会将匹配上的部分进行字符串替换。</strong></p>
 <p>如果只设置了domain，没有设置URI，则location匹配到请求中的原始URI会附加在domain后面，作为URI</p>
 <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#假设下面四种情况分别用 http://192.168.1.1/proxy/test.html 进行访问。</span></span><br><span class="line"><span class="attribute">location</span> /proxy/ &#123;</span><br><span class="line">    <span class="attribute">proxy_pass</span> http://127.0.0.1;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">#代理到URL：http://127.0.0.1/proxy/test.html</span></span><br></pre></td></tr></table></figure>
-<h3 id="proxy-set-header"><a href="#proxy-set-header" class="headerlink" title="proxy_set_header"></a>proxy_set_header</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Syntax:		proxy_set_header field value;</span><br><span class="line">Default:	proxy_set_header Host $proxy_host;</span><br><span class="line">					<span class="attribute">proxy_set_header</span> Connection close;</span><br><span class="line">Context:	http, server, location</span><br></pre></td></tr></table></figure>
+<h3 id="proxy-set-header"><a href="#proxy-set-header" class="headerlink" title="proxy_set_header"></a>proxy_set_header</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Syntax:   proxy_set_header field value;</span><br><span class="line">Default:  proxy_set_header Host $proxy_host;</span><br><span class="line">          <span class="attribute">proxy_set_header</span> Connection close;</span><br><span class="line">Context:  http, server, location</span><br></pre></td></tr></table></figure>
 <p>允许重新定义或者添加发往后端服务器的请求头。其值可以包含文本、变量或者二者的组合，当且仅当当前配置级别中没有定义<code>proxy_set_header</code>指令时，会从上面的级别继承配置。 默认情况下，只有两个请求头会被重新定义。</p>
 <p>关于proxy_set_header功能可以设置反向代理后的http header中的<code>$host</code>,<code>$http_host</code>,<code>$proxy_host</code>，那么这几个有什么区别呢？</p>
 <p>proxy_host：是proxy_pass后面指定的host</p>
@@ -480,17 +498,17 @@
 <p>举个🌰，135、136、137三台机器均设置为：</p>
 <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line"><span class="comment">#日志格式</span></span><br><span class="line"><span class="attribute">log_format</span> main <span class="string">'<span class="variable">$remote_addr</span> "<span class="variable">$http_x_real_ip</span>" - <span class="variable">$remote_user</span> [<span class="variable">$time_local</span>] "<span class="variable">$request</span>" "<span class="variable">$http_host</span>" '</span></span><br><span class="line"><span class="string">'<span class="variable">$status</span> <span class="variable">$body_bytes_sent</span> "<span class="variable">$http_referer</span>" '</span></span><br><span class="line"><span class="string">'"<span class="variable">$http_user_agent</span>" "<span class="variable">$http_x_forwarded_for</span>"'</span>;</span><br></pre></td></tr></table></figure>
 <p>代理情况如图所示：</p>
-<p><img src="/uncategorized/二级代理.png" alt="二级代理"></p>
+<p><img src="/nginx-proxy/二级代理.png" alt="二级代理"></p>
 <p>135机器上看到的日志中http_x_forwarded_for为真实客户端192.168.1.1，因为此时他的”X-Forwarded-For”部分是空的，所以只有<code>$remote_addr</code></p>
 <p>136机器上看到的日志中http_x_forwarded_for为”192.168.1.1, 192.168.1.135”</p>
 <p>137机器上看到的日志中http_x_forwarded_for为”192.168.1.1, 192.168.1.135, 192.168.1.136”</p>
-<h3 id="proxy-send-timeout"><a href="#proxy-send-timeout" class="headerlink" title="proxy_send_timeout"></a>proxy_send_timeout</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Syntax:		proxy_send_timeout time;</span><br><span class="line">Default:	proxy_send_timeout 60s;</span><br><span class="line">Context:	http, server, location</span><br></pre></td></tr></table></figure>
+<h3 id="proxy-send-timeout"><a href="#proxy-send-timeout" class="headerlink" title="proxy_send_timeout"></a>proxy_send_timeout</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Syntax:  proxy_send_timeout time;</span><br><span class="line">Default: proxy_send_timeout 60s;</span><br><span class="line">Context: http, server, location</span><br></pre></td></tr></table></figure>
 <p>设置代理服务器与后端服务器的请求发送超时时间，这个时间只会在连续的两次写操作中生效，如果在此期间后端没有再接收数据，则连接会被断开。</p>
-<h3 id="proxy-read-timeout"><a href="#proxy-read-timeout" class="headerlink" title="proxy_read_timeout"></a>proxy_read_timeout</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Syntax:		proxy_read_timeout time;</span><br><span class="line">Default:	proxy_read_timeout 60s;</span><br><span class="line">Context:	http, server, location</span><br></pre></td></tr></table></figure>
+<h3 id="proxy-read-timeout"><a href="#proxy-read-timeout" class="headerlink" title="proxy_read_timeout"></a>proxy_read_timeout</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Syntax:  proxy_read_timeout time;</span><br><span class="line">Default: proxy_read_timeout 60s;</span><br><span class="line">Context: http, server, location</span><br></pre></td></tr></table></figure>
 <p>定义从后端读取数据的超时时间。默认60s</p>
-<h3 id="proxy-set-body"><a href="#proxy-set-body" class="headerlink" title="proxy_set_body"></a>proxy_set_body</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Syntax:		proxy_set_body value;</span><br><span class="line">Default:	—</span><br><span class="line">Context:	http, server, location</span><br></pre></td></tr></table></figure>
+<h3 id="proxy-set-body"><a href="#proxy-set-body" class="headerlink" title="proxy_set_body"></a>proxy_set_body</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Syntax:  proxy_set_body value;</span><br><span class="line">Default: —</span><br><span class="line">Context: http, server, location</span><br></pre></td></tr></table></figure>
 <p>允许重新定义请求体，这里的value可以是文本、变量、或者二者的组合。</p>
-<h3 id="proxy-bind"><a href="#proxy-bind" class="headerlink" title="proxy_bind"></a>proxy_bind</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Syntax:		proxy_bind address [transparent] | off;</span><br><span class="line">Default:	—</span><br><span class="line">Context:	http, server, location</span><br></pre></td></tr></table></figure>
+<h3 id="proxy-bind"><a href="#proxy-bind" class="headerlink" title="proxy_bind"></a>proxy_bind</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Syntax:  proxy_bind address [transparent] | off;</span><br><span class="line">Default: —</span><br><span class="line">Context: http, server, location</span><br></pre></td></tr></table></figure>
 <p>此指令用于绑定代理后端web服务器收到的请求报文里源ip端口:</p>
 <p>1）如果设定为固定的IP，那么后端真正看到的就是这个固定的IP</p>
 <p>2）如果填写的<code>$remote_addr</code>则看到的是真实client的IP</p>
@@ -498,7 +516,7 @@
 <p><strong>transparent</strong>：参数的作用是透传客户端IP，使用此参数，在linux上，在1.13.1以下版本需要超级用户权限。</p>
 <p>如：</p>
 <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">location</span> / &#123;</span><br><span class="line">    <span class="attribute">proxy_pass</span> http://localhost:8000;</span><br><span class="line">    <span class="attribute">proxy_bind</span> <span class="variable">$remote_addr</span> transparent;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="proxy-next-upstream"><a href="#proxy-next-upstream" class="headerlink" title="proxy_next_upstream"></a>proxy_next_upstream</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Syntax:		proxy_next_upstream error | timeout | invalid_header | http_500 | http_502 | http_503 | http_504 | http_403 | http_404 | http_429 | non_idempotent | off ...;</span><br><span class="line">Default:	proxy_next_upstream error timeout;</span><br><span class="line">Context:	http, server, location</span><br></pre></td></tr></table></figure>
+<h3 id="proxy-next-upstream"><a href="#proxy-next-upstream" class="headerlink" title="proxy_next_upstream"></a>proxy_next_upstream</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Syntax:  proxy_next_upstream error | timeout | invalid_header | http_500 | http_502 | http_503 | http_504 | http_403 | http_404 | http_429 | non_idempotent | off ...;</span><br><span class="line">Default: proxy_next_upstream error timeout;</span><br><span class="line">Context: http, server, location</span><br></pre></td></tr></table></figure>
 <p>指定在后端返回相应情况下转发到下一台服务器。</p>
 <blockquote>
 <p><strong>error</strong>      ： 和后端服务器建立连接时，或者向后端服务器发送请求时，或者从后端服务器接收响应头时，出现错误<br><strong>timeout</strong> ：和后端服务器建立连接时，或者向后端服务器发送请求时，或者从后端服务器接收响应头时，出现超时<br><strong>invalid_header</strong> ： 后端服务器返回空响应或者非法响应头<br><strong>http_500</strong> ： 后端服务器返回的响应状态码为500<br><strong>http_502</strong> ： 后端服务器返回的响应状态码为502<br><strong>http_503</strong> ： 后端服务器返回的响应状态码为503<br><strong>http_504</strong> ： 后端服务器返回的响应状态码为504<br><strong>http_404</strong> ： 后端服务器返回的响应状态码为404<br><strong>off</strong>            ： 停止将请求发送给下一台后端服务器</p>
@@ -528,7 +546,7 @@
     <strong>本文作者： </strong>风月</li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="/uncategorized/" title="nginx之proxy">/uncategorized/</a>
+    <a href="/nginx-proxy/" title="nginx之proxy">/nginx-proxy/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
@@ -542,6 +560,8 @@
         <div class="post-tags">
           
             <a href="/tags/nginx/" rel="tag"># nginx</a>
+          
+            <a href="/tags/proxy/" rel="tag"># proxy</a>
           
         </div>
       
@@ -676,7 +696,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">11</span>
+                      
+                    
+                    <span class="site-state-item-count">12</span>
                     <span class="site-state-item-name">分类</span>
                   
                 </div>
@@ -723,7 +745,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">17</span>
+                      
+                    
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
