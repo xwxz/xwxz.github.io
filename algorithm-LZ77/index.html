@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.3.0',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="LZ77算法是无损压缩算法，由以色列人Abraham Lempel发表于1977年。LZ77是典型的基于字典的压缩算法，现在很多压缩技术都是基于LZ77。鉴于其在数据压缩领域的地位，本文将结合图片和源码详细介绍其原理。">
+<meta name="keywords" content="压缩算法,lz77">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LZ77压缩算法">
+<meta property="og:url" content="/algorithm-LZ77/index.html">
+<meta property="og:site_name" content="风月">
+<meta property="og:description" content="LZ77算法是无损压缩算法，由以色列人Abraham Lempel发表于1977年。LZ77是典型的基于字典的压缩算法，现在很多压缩技术都是基于LZ77。鉴于其在数据压缩领域的地位，本文将结合图片和源码详细介绍其原理。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="/algorithm-LZ77/022016105456631.png">
+<meta property="og:image" content="/algorithm-LZ77/022022065767796.png">
+<meta property="og:image" content="/algorithm-LZ77/022028001558675.png">
+<meta property="og:image" content="/algorithm-LZ77/022029151557762.png">
+<meta property="og:image" content="/algorithm-LZ77/022030497951749.png">
+<meta property="og:image" content="/algorithm-LZ77/022032500457544.png">
+<meta property="og:image" content="/algorithm-LZ77/022033461551104.png">
+<meta property="og:image" content="/algorithm-LZ77/022037258738012.png">
+<meta property="og:image" content="/algorithm-LZ77/022038402338227.png">
+<meta property="og:updated_time" content="2019-09-19T13:48:44.945Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LZ77压缩算法">
+<meta name="twitter:description" content="LZ77算法是无损压缩算法，由以色列人Abraham Lempel发表于1977年。LZ77是典型的基于字典的压缩算法，现在很多压缩技术都是基于LZ77。鉴于其在数据压缩领域的地位，本文将结合图片和源码详细介绍其原理。">
+<meta name="twitter:image" content="/algorithm-LZ77/022016105456631.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="风月" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="/algorithm-LZ77/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>LZ77压缩算法 | 风月</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">风月</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">清如风，明如月</h1>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">20</span></a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">12</span></a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+    <a href="/404.html" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />公益 404</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="/algorithm-LZ77/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="风月">
+      <meta itemprop="description" content="记录工作中学习的小知识点">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风月">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">LZ77压缩算法
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-19 21:35:17 / 修改时间：21:48:44" itemprop="dateCreated datePublished" datetime="2019-09-19T21:35:17+08:00">2019-09-19</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/algorithm-LZ77/" itemprop="url" rel="index"><span itemprop="name">algorithm/LZ77</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　LZ77算法是无损压缩算法，由以色列人Abraham Lempel发表于1977年。LZ77是典型的基于字典的压缩算法，现在很多压缩技术都是基于LZ77。鉴于其在数据压缩领域的地位，本文将结合图片和源码详细介绍其原理。</p>
+ <a id="more"></a>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a><strong>原理</strong></h1><h2 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h2><p><strong>lookahead buffer：</strong>等待编码的区域</p>
+<p><strong>search buffer：</strong>搜索缓冲区</p>
+<p><strong>move window：</strong>滑动窗口，指定大小的窗，包含 “搜索缓冲区”（黄色块） + “待编码区”（绿色块）</p>
+<h2 id="编码过程"><a href="#编码过程" class="headerlink" title="编码过程　　"></a>编码过程　　</h2><p>　　为了编码待编码区， 编码器在滑动窗口的搜索缓冲区查找，直到找到匹配的字符串。匹配字符串的开始字符串与待编码缓冲区的距离称为<code>偏移值</code>，匹配字符串的长度称为<code>匹配长度</code>。编码器在编码时，会一直在搜索区中搜索，直到找到最大匹配字符串，并输出(offset, matchLength )，其中offset是偏移值， matchLength是匹配长度。然后窗口滑动matchLength，继续开始编码。如果没有找到匹配字符串，则输出(0, 0, char)，char为待编码区待编码的字符，窗口滑动1位。算法实现将类似下面的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>( lookAheadBuffer <span class="keyword">not</span> empty )</span><br><span class="line">&#123;</span><br><span class="line">    get a pointer (position, match) to the longest match </span><br><span class="line">    <span class="keyword">in</span> the window <span class="keyword">for</span> the lookAheadBuffer;</span><br><span class="line"></span><br><span class="line">    output a (position, length, char());</span><br><span class="line">    shift the window length+<span class="number">1</span> characters along;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>主要步骤为：</strong></p>
+<blockquote>
+<p>1.设置编码位置为输入流的开始</p>
+<p>2.在滑窗的待编码区查找搜索区中的最大匹配字符串</p>
+<p>3.如果找到字符串，输出(偏移值， 匹配长度)， 窗口向前滑动“匹配长度”</p>
+<p>4.如果没有找到，输出(0, 0, 待编码区的第一个字符)，窗口向前滑动一个单位</p>
+<p>5.如果待编码区不为空，回到步骤2</p>
+</blockquote>
+<h2 id="图文讲解"><a href="#图文讲解" class="headerlink" title="图文讲解"></a>图文讲解</h2><p>现在有字符串“AABCBBABC”，现在对其进行编码。</p>
+<p>一开始，窗口滑入如图位置</p>
+<p><img src="/algorithm-LZ77/022016105456631.png" alt="img"></p>
+<p>　　由图可见，待编码缓冲区有“AAB”三个字符，此时搜索缓冲区还是空的。所以编码第一个字符，由于搜索区为空，故找不到匹配串，输出(0,0, A),窗口右移一个单位，如下图</p>
+<p><img src="/algorithm-LZ77/022022065767796.png" alt="img"></p>
+<p>　　此时待编码区有“ABC”。开始编码。最先编码”A”，在搜索区找到”A”。由于没有超过待编码区，故开始编码”AB”，但在搜索区没有找到匹配字符串，故无法编码。因此只能编码”A”。</p>
+<p>输出(1, 1)。即为相对于待编码区，偏移一个单位，匹配长度为1。窗口右滑动匹配长度，即移动1个单位。如下图</p>
+<p><img src="/algorithm-LZ77/022028001558675.png" alt="img"></p>
+<p>一样，没找到，输出(0, 0, B),右移1个单号，如下图</p>
+<p><img src="/algorithm-LZ77/022029151557762.png" alt="img"></p>
+<p>输出（0， 0， C）,右移1个单位，如下图</p>
+<p><img src="/algorithm-LZ77/022030497951749.png" alt="img"></p>
+<p>输出(2, 1),右移1个单位，如下图</p>
+<p><img src="/algorithm-LZ77/022032500457544.png" alt="img"></p>
+<p>输出(3, 1)， 右移1个单位，如下图</p>
+<p>　　<img src="/algorithm-LZ77/022033461551104.png" alt="img"></p>
+<p>　　开始编码”A”，在搜索缓冲区查找到匹配字符串。由于待编码缓冲区没有超过，继续编码。开始编码”AB”,也搜索到。不要停止，继续编码“ABC”，找到匹配字符串。由于继续编码，则超过了窗口，故只编码“ABC”，输出(5, 3),偏移5，长度3。右移3个单位，如下图</p>
+<p>　　<img src="/algorithm-LZ77/022037258738012.png" alt="img"></p>
+<p>此时待编码缓冲区为空，停止编码。</p>
+<p>最终输出结果如下</p>
+<p>　　<img src="/algorithm-LZ77/022038402338227.png" alt="img"></p>
+<p><strong>python代码实现：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Lz77</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, inputStr)</span>:</span></span><br><span class="line">        self.inputStr = inputStr <span class="comment">#输入流</span></span><br><span class="line">        self.searchSize = <span class="number">5</span>    <span class="comment">#搜索缓冲区(已编码区)大小</span></span><br><span class="line">        self.aheadSize = <span class="number">3</span>     <span class="comment">#lookAhead缓冲区（待编码区）大小 </span></span><br><span class="line">        self.windSpiltIndex = <span class="number">0</span> <span class="comment">#lookHead缓冲区开始的索引</span></span><br><span class="line">        self.move = <span class="number">0</span></span><br><span class="line">        self.notFind = <span class="number">-1</span>   <span class="comment">#没有找到匹配字符串</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#得到滑动窗口的末端索引</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getWinEndIndex</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.windSpiltIndex + self.aheadSize</span><br><span class="line"></span><br><span class="line">    <span class="comment">#得到滑动窗口的始端索引</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getWinStartIndex</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.windSpiltIndex - self.searchSize</span><br><span class="line"></span><br><span class="line">    <span class="comment">#判断lookHead缓冲区是否为空</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isLookHeadEmpty</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">True</span> <span class="keyword">if</span> self.windSpiltIndex + self.move&gt; len(self.inputStr) - <span class="number">1</span>   <span class="keyword">else</span> <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">encoding</span><span class="params">(self)</span>:</span></span><br><span class="line">        step = <span class="number">0</span></span><br><span class="line">        print(<span class="string">"Step   Position   Match   Output"</span>)</span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">not</span> self.isLookHeadEmpty():</span><br><span class="line">            <span class="comment">#1.滑动窗口</span></span><br><span class="line">            self.winMove()</span><br><span class="line">            <span class="comment">#2. 得到最大匹配串的偏移值和长度</span></span><br><span class="line">            (offset, matchLen) = self.findMaxMatch()</span><br><span class="line">            <span class="comment">#3.设置窗口下一步需要滑动的距离</span></span><br><span class="line">            self.setMoveSteps(matchLen) </span><br><span class="line">            <span class="keyword">if</span> matchLen == <span class="number">0</span>:</span><br><span class="line">                <span class="comment">#匹配为0，说明无字符串匹配，输出下一个需要编码的字母</span></span><br><span class="line">                nextChar = self.inputStr[self.windSpiltIndex]</span><br><span class="line">                result = (step, self.windSpiltIndex, <span class="string">'-'</span>,  <span class="string">'(0,0)'</span> + nextChar)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                result = (step, self.windSpiltIndex, self.inputStr[self.windSpiltIndex - offset: self.windSpiltIndex - offset + matchLen], <span class="string">'('</span> + str(offset) + <span class="string">','</span> + str(matchLen) + <span class="string">')'</span>)</span><br><span class="line">            <span class="comment">#4.输出结果</span></span><br><span class="line">            self.output(result)    </span><br><span class="line">            step = step + <span class="number">1</span>        <span class="comment">#仅用来设置第几步</span></span><br><span class="line">           </span><br><span class="line"></span><br><span class="line">    <span class="comment">#滑动窗口(移动分界点)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">winMove</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.windSpiltIndex = self.windSpiltIndex + self.move</span><br><span class="line"></span><br><span class="line">    <span class="comment">#寻找最大匹配字符并返回相对于窗口分界点的偏移值和匹配长度</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">findMaxMatch</span><span class="params">(self)</span>:</span></span><br><span class="line">        matchLen = <span class="number">0</span></span><br><span class="line">        offset = <span class="number">0</span></span><br><span class="line">        minEdge = self.minEdge() + <span class="number">1</span>  <span class="comment">#得到编码区域的右边界</span></span><br><span class="line">        <span class="comment">#遍历待编码区，寻找最大匹配串</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(self.windSpiltIndex + <span class="number">1</span>, minEdge):</span><br><span class="line">            <span class="comment">#print("i: %d" %i)</span></span><br><span class="line">            offsetTemp = self.searchBufferOffest(i)</span><br><span class="line">            <span class="keyword">if</span> offsetTemp == self.notFind: </span><br><span class="line">                <span class="keyword">return</span> (offset, matchLen)</span><br><span class="line">            offset = offsetTemp <span class="comment">#偏移值</span></span><br><span class="line">            </span><br><span class="line">            matchLen = matchLen + <span class="number">1</span>  <span class="comment">#每找到一个匹配串，加1</span></span><br><span class="line">            </span><br><span class="line">        <span class="keyword">return</span> (offset, matchLen)</span><br><span class="line">        </span><br><span class="line">    <span class="comment">#入参字符串是否存在于搜索缓冲区，如果存在，返回匹配字符串的起始索引</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">searchBufferOffest</span><span class="params">(self, i)</span>:</span></span><br><span class="line">        searchStart = self.getWinStartIndex()</span><br><span class="line">        searchEnd = self.windSpiltIndex </span><br><span class="line">        <span class="comment">#下面几个if是处理开始时的特殊情况</span></span><br><span class="line">        <span class="keyword">if</span> searchEnd &lt; <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span> self.notFind</span><br><span class="line">        <span class="keyword">if</span> searchStart &lt; <span class="number">0</span>:</span><br><span class="line">            searchStart = <span class="number">0</span></span><br><span class="line">            <span class="keyword">if</span> searchEnd == <span class="number">0</span>:</span><br><span class="line">                searchEnd = <span class="number">1</span></span><br><span class="line">        searchStr = self.inputStr[searchStart : searchEnd]  <span class="comment">#搜索区字符串</span></span><br><span class="line">        findIndex = searchStr.find(self.inputStr[self.windSpiltIndex : i])</span><br><span class="line">        <span class="keyword">if</span> findIndex == <span class="number">-1</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">        <span class="keyword">return</span> len(searchStr) - findIndex</span><br><span class="line"></span><br><span class="line">    <span class="comment">#设置下一次窗口需要滑动的步数</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">setMoveSteps</span><span class="params">(self, matchLen)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> matchLen == <span class="number">0</span>:</span><br><span class="line">            self.move = <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.move = matchLen</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">minEdge</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> len(self.inputStr)  <span class="keyword">if</span> len(self.inputStr) - <span class="number">1</span> &lt; self.getWinEndIndex() <span class="keyword">else</span> self.getWinEndIndex() + <span class="number">1</span></span><br><span class="line">         </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">output</span><span class="params">(self, touple)</span>:</span></span><br><span class="line">        print(<span class="string">"%d      %d           %s     %s"</span> % touple)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    lz77 = Lz77(<span class="string">"AABCBBABC"</span>)</span><br><span class="line">    lz77.encoding()</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>风月</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="/algorithm-LZ77/" title="LZ77压缩算法">/algorithm-LZ77/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/压缩算法/" rel="tag"># 压缩算法</a>
+          
+            <a href="/tags/lz77/" rel="tag"># lz77</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/nginx-proxy/" rel="next" title="nginx之proxy">
+                <i class="fa fa-chevron-left"></i> nginx之proxy
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zODM1NS8xNDg4Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="风月" />
+            
+              <p class="site-author-name" itemprop="name">风月</p>
+              <p class="site-description motion-element" itemprop="description">记录工作中学习的小知识点</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">20</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:419444595@qq.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://weibo.com/smuler" target="_blank" title="weibo" rel="external nofollow"><i class="fa fa-fw fa-weibo"></i>weibo</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰的网络日志" target="_blank">阮一峰的网络日志</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#原理"><span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#名词解释"><span class="nav-text">名词解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编码过程"><span class="nav-text">编码过程　　</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图文讲解"><span class="nav-text">图文讲解</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">风月</span>
+
+  
+
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.3.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
