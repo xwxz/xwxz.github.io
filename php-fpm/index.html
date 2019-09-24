@@ -16,7 +16,7 @@
 
 <html class="theme-next gemini use-motion" lang="zh-CN">
 <head>
-  <meta charset="UTF-8"/>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
 <meta name="theme-color" content="#222">
@@ -109,7 +109,7 @@
 
 
   <meta name="description" content="​    之前看过网上零散的关于php-fpm分析的文章，要么不全，要么就是讲解php-fpm的配置文件的，还有就是讲解nginx与php-fpm之间通信配置的。关于php-fpm中的进程管理、信号管理、事件处理、时钟管理、请求处理等几乎为零。故本着学习的宗旨对fpm源码进行解读。本系列采用php-7.2.0版本中的php-fpm进行分系列讲解。本系列共分为5节，具体如下：">
-<meta name="keywords" content="PHP,源码分析,fpm">
+<meta name="keywords" content="fpm,源码分析,PHP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="fpm源码解析准备【原创】">
 <meta property="og:url" content="/php-fpm/index.html">
@@ -177,7 +177,7 @@
       .logo-line-after i { right: initial; }
     }
   </style>
-</noscript>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 </head>
 
@@ -188,7 +188,7 @@
     
   
 
-  <div class="container sidebar-position-right page-post-detail">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -239,7 +239,7 @@
           
           <li class="menu-item menu-item-tags">
     <a href="/tags/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">20</span></a>
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">21</span></a>
   </li>
         
         
@@ -247,7 +247,7 @@
           
           <li class="menu-item menu-item-archives">
     <a href="/archives/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">12</span></a>
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">13</span></a>
   </li>
         
         
@@ -533,11 +533,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/PHP/" rel="tag"># PHP</a>
+            <a href="/tags/fpm/" rel="tag"># fpm</a>
           
             <a href="/tags/源码分析/" rel="tag"># 源码分析</a>
           
-            <a href="/tags/fpm/" rel="tag"># fpm</a>
+            <a href="/tags/PHP/" rel="tag"># PHP</a>
           
         </div>
       
@@ -550,8 +550,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/c-pointer-01/" rel="next" title="C语言指针详解【转载】">
-                <i class="fa fa-chevron-left"></i> C语言指针详解【转载】
+              <a href="/c-malloc-01/" rel="next" title="malloc函数详解【转载】">
+                <i class="fa fa-chevron-left"></i> malloc函数详解【转载】
               </a>
             
           </div>
@@ -641,7 +641,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-count">13</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -682,7 +682,7 @@
                     
                       
                     
-                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-count">14</span>
                     <span class="site-state-item-name">分类</span>
                   
                 </div>
@@ -735,7 +735,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">20</span>
+                      
+                    
+                    <span class="site-state-item-count">21</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -979,7 +981,24 @@
         j.async = true;
         e.parentNode.insertBefore(j, e);
       })(document, 'script');
-    </script>
+    </script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="http://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
   
 
 
@@ -1004,6 +1023,13 @@
   
 
   
+  
+
+  
+  
+
+  
+
 
   
   

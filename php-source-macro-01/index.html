@@ -16,7 +16,7 @@
 
 <html class="theme-next gemini use-motion" lang="zh-CN">
 <head>
-  <meta charset="UTF-8"/>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
 <meta name="theme-color" content="#222">
@@ -109,7 +109,7 @@
 
 
   <meta name="description" content="​    作为 PHPer，我们几乎每天都在写函数，我们一定会好奇，那些 PHP 内置的函数，是长什么样子的。如果写过 PHP 扩展的话，一定知道这个宏：PHP_FUNCTION。在定义一个函数的时候，这样来使用这个宏。例如 array_change_key_case，它的定义是这样的：PHP_FUNCTION(array_change_key_case)。没错，就是这么简单。但是，在这个简单的背">
-<meta name="keywords" content="PHP,源码分析">
+<meta name="keywords" content="源码分析,PHP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PHP源码之宏【转载】">
 <meta property="og:url" content="/php-source-macro-01/index.html">
@@ -174,7 +174,7 @@
       .logo-line-after i { right: initial; }
     }
   </style>
-</noscript>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 </head>
 
@@ -185,7 +185,7 @@
     
   
 
-  <div class="container sidebar-position-right page-post-detail">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -236,7 +236,7 @@
           
           <li class="menu-item menu-item-tags">
     <a href="/tags/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">20</span></a>
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">21</span></a>
   </li>
         
         
@@ -244,7 +244,7 @@
           
           <li class="menu-item menu-item-archives">
     <a href="/archives/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">12</span></a>
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">13</span></a>
   </li>
         
         
@@ -482,9 +482,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/PHP/" rel="tag"># PHP</a>
-          
             <a href="/tags/源码分析/" rel="tag"># 源码分析</a>
+          
+            <a href="/tags/PHP/" rel="tag"># PHP</a>
           
         </div>
       
@@ -507,8 +507,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/c-malloc-01/" rel="prev" title="malloc函数详解【转载】">
-                malloc函数详解【转载】 <i class="fa fa-chevron-right"></i>
+              <a href="/c-pointer-01/" rel="prev" title="C语言指针详解【转载】">
+                C语言指针详解【转载】 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -588,7 +588,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-count">13</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -629,7 +629,7 @@
                     
                       
                     
-                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-count">14</span>
                     <span class="site-state-item-name">分类</span>
                   
                 </div>
@@ -682,7 +682,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">20</span>
+                      
+                    
+                    <span class="site-state-item-count">21</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -926,7 +928,24 @@
         j.async = true;
         e.parentNode.insertBefore(j, e);
       })(document, 'script');
-    </script>
+    </script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="http://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
   
 
 
@@ -951,6 +970,13 @@
   
 
   
+  
+
+  
+  
+
+  
+
 
   
   
