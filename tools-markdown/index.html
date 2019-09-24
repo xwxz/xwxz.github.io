@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.3.0',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="原生hexo并不支持数学公式，需要安装插件 mathJax。mathJax 是一款运行于浏览器中的开源数学符号渲染引擎，使用 mathJax 可以方便的在浏览器中嵌入数学公式。mathJax 使用网络字体产生高质量的排版，因此可适应各种分辨率，它的显示是基于文本的而非图片，因此显示效果更好。这些公式可以被搜索引擎使用，因此公式里的符号一样可以被搜索引擎检索到。">
+<meta name="keywords" content="markdown,hexo,latex">
+<meta property="og:type" content="article">
+<meta property="og:title" content="markdown之数学公式语法">
+<meta property="og:url" content="/tools-markdown/index.html">
+<meta property="og:site_name" content="风月">
+<meta property="og:description" content="原生hexo并不支持数学公式，需要安装插件 mathJax。mathJax 是一款运行于浏览器中的开源数学符号渲染引擎，使用 mathJax 可以方便的在浏览器中嵌入数学公式。mathJax 使用网络字体产生高质量的排版，因此可适应各种分辨率，它的显示是基于文本的而非图片，因此显示效果更好。这些公式可以被搜索引擎使用，因此公式里的符号一样可以被搜索引擎检索到。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-24T13:18:18.517Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="markdown之数学公式语法">
+<meta name="twitter:description" content="原生hexo并不支持数学公式，需要安装插件 mathJax。mathJax 是一款运行于浏览器中的开源数学符号渲染引擎，使用 mathJax 可以方便的在浏览器中嵌入数学公式。mathJax 使用网络字体产生高质量的排版，因此可适应各种分辨率，它的显示是基于文本的而非图片，因此显示效果更好。这些公式可以被搜索引擎使用，因此公式里的符号一样可以被搜索引擎检索到。">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="风月" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="/tools-markdown/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>markdown之数学公式语法 | 风月</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">风月</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">清如风，明如月</h1>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">24</span></a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">14</span></a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+    <a href="/404.html" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />公益 404</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="/tools-markdown/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="风月">
+      <meta itemprop="description" content="记录工作中学习的小知识点">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风月">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">markdown之数学公式语法
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-24 21:05:17 / 修改时间：21:18:18" itemprop="dateCreated datePublished" datetime="2019-09-24T21:05:17+08:00">2019-09-24</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/tools-markdown/" itemprop="url" rel="index"><span itemprop="name">tools/markdown</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>原生hexo并不支持数学公式，需要安装插件 <a href="https://www.mathjax.org/" target="_blank" rel="noopener">mathJax</a>。<a href="https://www.mathjax.org/" target="_blank" rel="noopener">mathJax</a> 是一款运行于浏览器中的开源数学符号渲染引擎，使用 <a href="https://www.mathjax.org/" target="_blank" rel="noopener">mathJax</a> 可以方便的在浏览器中嵌入数学公式。<a href="https://www.mathjax.org/" target="_blank" rel="noopener">mathJax</a> 使用网络字体产生高质量的排版，因此可适应各种分辨率，它的显示是基于文本的而非图片，因此显示效果更好。这些公式可以被搜索引擎使用，因此公式里的符号一样可以被搜索引擎检索到。</p>
+<a id="more"></a>
+<h2 id="行内与独行"><a href="#行内与独行" class="headerlink" title="行内与独行"></a>行内与独行</h2><ol>
+<li>行内公式：将公式插入到本行内，符号：<code>$公式内容$</code>，如：$xyz$</li>
+<li>独行公式：将公式插入到新的一行内，并且居中，符号：<code>$$公式内容$$</code>，如：$$xyz$$</li>
+</ol>
+<h2 id="上标、下标与组合"><a href="#上标、下标与组合" class="headerlink" title="上标、下标与组合"></a>上标、下标与组合</h2><ol>
+<li>上标符号，符号：<code>^</code>，如：$x^4$</li>
+<li>下标符号，符号：<code>_</code>，如：$x_1$</li>
+<li>组合符号，符号：<code>{}</code>，如： ${16} _{8} O {2+} _{2}$</li>
+</ol>
+<h2 id="汉字、字体与格式"><a href="#汉字、字体与格式" class="headerlink" title="汉字、字体与格式"></a>汉字、字体与格式</h2><ol>
+<li>汉字形式，符号：<code>\mbox{}</code>，如：$V_{\mbox{初始}}$</li>
+<li>字体控制，符号：<code>\displaystyle</code>，如：$\displaystyle \frac{x+y}{y+z}$</li>
+<li>下划线符号，符号：<code>\underline</code>，如：$\underline{x+y}$</li>
+<li>标签，符号<code>\tag{数字}</code>，如：$\tag{11}$</li>
+<li>上大括号，符号：<code>\overbrace{算式}</code>，如：$\overbrace{a+b+c+d}^{2.0}$</li>
+<li>下大括号，符号：<code>\underbrace{算式}</code>，如：$a+\underbrace{b+c}_{1.0}+d$</li>
+<li>上位符号，符号：<code>\stacrel{上位符号}{基位符号}</code>，如：$\vec{x}\stackrel{\mathrm{def}}{=}{x_1,\dots,x_n}$</li>
+</ol>
+<h2 id="占位符"><a href="#占位符" class="headerlink" title="占位符"></a>占位符</h2><ol>
+<li>两个quad空格，符号：<code>\qquad</code>，如：$x \qquad y$</li>
+<li>quad空格，符号：<code>\quad</code>，如：$x \quad y$</li>
+<li>大空格，符号<code>\</code>，如：$x \ y$</li>
+<li>中空格，符号<code>\:</code>，如：$x : y$</li>
+<li>小空格，符号<code>\,</code>，如：$x , y$</li>
+<li>没有空格，符号<code></code>，如：$xy$</li>
+<li>紧贴，符号<code>\!</code>，如：$x ! y$</li>
+</ol>
+<h2 id="定界符与组合"><a href="#定界符与组合" class="headerlink" title="定界符与组合"></a>定界符与组合</h2><ol>
+<li>括号，符号：<code>（）\big(\big) \Big(\Big) \bigg(\bigg) \Bigg(\Bigg)</code>，如：$（）\big(\big) \Big(\Big) \bigg(\bigg) \Bigg(\Bigg)$</li>
+<li>中括号，符号：<code>[]</code>，如：$[x+y]$</li>
+<li>大括号，符号：<code>\{ \}</code>，如：${x+y}$</li>
+<li>自适应括号，符号：<code>\left \right</code>，如：$\left(x\right)$，$\left(x{yz}\right)$</li>
+<li>组合公式，符号：<code>{上位公式 \choose 下位公式}</code>，如：${n+1 \choose k}={n \choose k}+{n \choose k-1}$</li>
+<li>组合公式，符号：<code>{上位公式 \atop 下位公式}</code>，如：$\sum_{k_0,k_1,\ldots&gt;0 \atop k_0+k_1+\cdots=n}A_{k_0}A_{k_1}\cdots$</li>
+</ol>
+<h2 id="四则运算"><a href="#四则运算" class="headerlink" title="四则运算"></a>四则运算</h2><ol>
+<li>加法运算，符号：<code>+</code>，如：$x+y=z$</li>
+<li>减法运算，符号：<code>-</code>，如：$x-y=z$</li>
+<li>加减运算，符号：<code>\pm</code>，如：$x \pm y=z$</li>
+<li>减甲运算，符号：<code>\mp</code>，如：$x \mp y=z$</li>
+<li>乘法运算，符号：<code>\times</code>，如：$x \times y=z$</li>
+<li>点乘运算，符号：<code>\cdot</code>，如：$x \cdot y=z$</li>
+<li>星乘运算，符号：<code>\ast</code>，如：$x \ast y=z$</li>
+<li>除法运算，符号：<code>\div</code>，如：$x \div y=z$</li>
+<li>斜法运算，符号：<code>/</code>，如：$x/y=z$</li>
+<li>分式表示，符号：<code>\frac{分子}{分母}</code>，如：$\frac{x+y}{y+z}$</li>
+<li>分式表示，符号：<code>{分子} \voer {分母}</code>，如：${x+y} \over {y+z}$</li>
+<li>绝对值表示，符号：<code>||</code>，如：$|x+y|$</li>
+</ol>
+<h2 id="高级运算"><a href="#高级运算" class="headerlink" title="高级运算"></a>高级运算</h2><ol>
+<li>平均数运算，符号：<code>\overline{算式}</code>，如：$\overline{xyz}$</li>
+<li>开二次方运算，符号：<code>\sqrt</code>，如：$\sqrt x$</li>
+<li>开方运算，符号：<code>\sqrt[开方数]{被开方数}</code>，如：$\sqrt[3]{x+y}$</li>
+<li>对数运算，符号：<code>\log</code>，如：$\log(x)$</li>
+<li>极限运算，符号：<code>\lim</code>，如：$\lim^{x \to \infty}_{y \to 0}{\frac{x}{y}}$</li>
+<li>极限运算，符号：<code>\displaystyle \lim</code>，如：$\displaystyle \lim^{x \to \infty}_{y \to 0}{\frac{x}{y}}$</li>
+<li>求和运算，符号：<code>\sum</code>，如：$\sum^{x \to \infty}_{y \to 0}{\frac{x}{y}}$</li>
+<li>求和运算，符号：<code>\displaystyle \sum</code>，如：$\displaystyle \sum^{x \to \infty}_{y \to 0}{\frac{x}{y}}$</li>
+<li>积分运算，符号：<code>\int</code>，如：$\int^{\infty}_{0}{xdx}$</li>
+<li>积分运算，符号：<code>\displaystyle \int</code>，如：$\displaystyle \int^{\infty}_{0}{xdx}$</li>
+<li>微分运算，符号：<code>\partial</code>，如：$\frac{\partial x}{\partial y}$</li>
+<li>矩阵表示，符号：<code>\begin{matrix} \end{matrix}</code>，如：$\left[\begin{matrix} 1 &amp;2 &amp;\cdots &amp;4 \5 &amp;6 &amp;\cdots &amp;8 \vdots &amp;\vdots &amp;\ddots &amp;\vdots \13 &amp;14 &amp;\cdots &amp;16\end{matrix} \right]$</li>
+</ol>
+<h2 id="逻辑运算"><a href="#逻辑运算" class="headerlink" title="逻辑运算"></a>逻辑运算</h2><ol>
+<li>等于运算，符号：<code>=</code>，如：$x+y=z$</li>
+<li>大于运算，符号：<code>&gt;</code>，如：$x+y&gt;z$</li>
+<li>小于运算，符号：<code>&lt;</code>，如：$x+y&lt;z$</li>
+<li>大于等于运算，符号：<code>\geq</code>，如：$x+y \geq z$</li>
+<li>小于等于运算，符号：<code>\leq</code>，如：$x+y \leq z$</li>
+<li>不等于运算，符号：<code>\neq</code>，如：$x+y \neq z$</li>
+<li>不大于等于运算，符号：<code>\ngeq</code>，如：$x+y \ngeq z$</li>
+<li>不大于等于运算，符号：<code>\not\geq</code>，如：$x+y \not\geq z$</li>
+<li>不小于等于运算，符号：<code>\nleq</code>，如：$x+y \nleq z$</li>
+<li>不小于等于运算，符号：<code>\not\leq</code>，如：$x+y \not\leq z$</li>
+<li>约等于运算，符号：<code>\approx</code>，如：$x+y \approx z$</li>
+<li>恒定等于运算，符号：<code>\equiv</code>，如：$x+y \equiv z$</li>
+</ol>
+<h2 id="集合运算"><a href="#集合运算" class="headerlink" title="集合运算"></a>集合运算</h2><ol>
+<li>属于运算，符号：<code>\in</code>，如：$x \in y$</li>
+<li>不属于运算，符号：<code>\notin</code>，如：$x \notin y$</li>
+<li>不属于运算，符号：<code>\not\in</code>，如：$x \not\in y$</li>
+<li>子集运算，符号：<code>\subset</code>，如：$x \subset y$</li>
+<li>子集运算，符号：<code>\supset</code>，如：$x \supset y$</li>
+<li>真子集运算，符号：<code>\subseteq</code>，如：$x \subseteq y$</li>
+<li>非真子集运算，符号：<code>\subsetneq</code>，如：$x \subsetneq y$</li>
+<li>真子集运算，符号：<code>\supseteq</code>，如：$x \supseteq y$</li>
+<li>非真子集运算，符号：<code>\supsetneq</code>，如：$x \supsetneq y$</li>
+<li>非子集运算，符号：<code>\not\subset</code>，如：$x \not\subset y$</li>
+<li>非子集运算，符号：<code>\not\supset</code>，如：$x \not\supset y$</li>
+<li>并集运算，符号：<code>\cup</code>，如：$x \cup y$</li>
+<li>交集运算，符号：<code>\cap</code>，如：$x \cap y$</li>
+<li>差集运算，符号：<code>\setminus</code>，如：$x \setminus y$</li>
+<li>同或运算，符号：<code>\bigodot</code>，如：$x \bigodot y$</li>
+<li>同与运算，符号：<code>\bigotimes</code>，如：$x \bigotimes y$</li>
+<li>实数集合，符号：<code>\mathbb{R}</code>，如：<code>\mathbb{R}</code></li>
+<li>自然数集合，符号：<code>\mathbb{Z}</code>，如：<code>\mathbb{Z}</code></li>
+<li>空集，符号：<code>\emptyset</code>，如：$\emptyset$</li>
+</ol>
+<h2 id="数学符号"><a href="#数学符号" class="headerlink" title="数学符号"></a>数学符号</h2><ol>
+<li>无穷，符号：<code>\infty</code>，如：$\infty$</li>
+<li>虚数，符号：<code>\imath</code>，如：$\imath$</li>
+<li>虚数，符号：<code>\jmath</code>，如：$\jmath$</li>
+<li>数学符号，符号<code>\hat{a}</code>，如：$\hat{a}$</li>
+<li>数学符号，符号<code>\check{a}</code>，如：$\check{a}$</li>
+<li>数学符号，符号<code>\breve{a}</code>，如：$\breve{a}$</li>
+<li>数学符号，符号<code>\tilde{a}</code>，如：$\tilde{a}$</li>
+<li>数学符号，符号<code>\bar{a}</code>，如：$\bar{a}$</li>
+<li>矢量符号，符号<code>\vec{a}</code>，如：$\vec{a}$</li>
+<li>数学符号，符号<code>\acute{a}</code>，如：$\acute{a}$</li>
+<li>数学符号，符号<code>\grave{a}</code>，如：$\grave{a}$</li>
+<li>数学符号，符号<code>\mathring{a}</code>，如：$\mathring{a}$</li>
+<li>一阶导数符号，符号<code>\dot{a}</code>，如：$\dot{a}$</li>
+<li>二阶导数符号，符号<code>\ddot{a}</code>，如：$\ddot{a}$</li>
+<li>上箭头，符号：<code>\uparrow</code>，如：$\uparrow$</li>
+<li>上箭头，符号：<code>\Uparrow</code>，如：$\Uparrow$</li>
+<li>下箭头，符号：<code>\downarrow</code>，如：$\downarrow$</li>
+<li>下箭头，符号：<code>\Downarrow</code>，如：$\Downarrow$</li>
+<li>左箭头，符号：<code>\leftarrow</code>，如：$\leftarrow$</li>
+<li>左箭头，符号：<code>\Leftarrow</code>，如：$\Leftarrow$</li>
+<li>右箭头，符号：<code>\rightarrow</code>，如：$\rightarrow$</li>
+<li>右箭头，符号：<code>\Rightarrow</code>，如：$\Rightarrow$</li>
+<li>底端对齐的省略号，符号：<code>\ldots</code>，如：$1,2,\ldots,n$</li>
+<li>中线对齐的省略号，符号：<code>\cdots</code>，如：$x_1^2 + x_2^2 + \cdots + x_n^2$</li>
+<li>竖直对齐的省略号，符号：<code>\vdots</code>，如：$\vdots$</li>
+<li>斜对齐的省略号，符号：<code>\ddots</code>，如：$\ddots$</li>
+</ol>
+<h2 id="希腊字母"><a href="#希腊字母" class="headerlink" title="希腊字母"></a>希腊字母</h2><table>
+<thead>
+<tr>
+<th>字母</th>
+<th>实现</th>
+<th>字母</th>
+<th>实现</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td><code>A</code></td>
+<td>α</td>
+<td><code>\alhpa</code></td>
+</tr>
+<tr>
+<td>B</td>
+<td><code>B</code></td>
+<td>β</td>
+<td><code>\beta</code></td>
+</tr>
+<tr>
+<td>Γ</td>
+<td><code>\Gamma</code></td>
+<td>γ</td>
+<td><code>\gamma</code></td>
+</tr>
+<tr>
+<td>Δ</td>
+<td><code>\Delta</code></td>
+<td>δ</td>
+<td><code>\delta</code></td>
+</tr>
+<tr>
+<td>E</td>
+<td><code>E</code></td>
+<td>ϵ</td>
+<td><code>\epsilon</code></td>
+</tr>
+<tr>
+<td>Z</td>
+<td><code>Z</code></td>
+<td>ζ</td>
+<td><code>\zeta</code></td>
+</tr>
+<tr>
+<td>H</td>
+<td><code>H</code></td>
+<td>η</td>
+<td><code>\eta</code></td>
+</tr>
+<tr>
+<td>Θ</td>
+<td><code>\Theta</code></td>
+<td>θ</td>
+<td><code>\theta</code></td>
+</tr>
+<tr>
+<td>I</td>
+<td><code>I</code></td>
+<td>ι</td>
+<td><code>\iota</code></td>
+</tr>
+<tr>
+<td>K</td>
+<td><code>K</code></td>
+<td>κ</td>
+<td><code>\kappa</code></td>
+</tr>
+<tr>
+<td>Λ</td>
+<td><code>\Lambda</code></td>
+<td>λ</td>
+<td><code>\lambda</code></td>
+</tr>
+<tr>
+<td>M</td>
+<td><code>M</code></td>
+<td>μ</td>
+<td><code>\mu</code></td>
+</tr>
+<tr>
+<td>N</td>
+<td><code>N</code></td>
+<td>ν</td>
+<td><code>\nu</code></td>
+</tr>
+<tr>
+<td>Ξ</td>
+<td><code>\Xi</code></td>
+<td>ξ</td>
+<td><code>\xi</code></td>
+</tr>
+<tr>
+<td>O</td>
+<td><code>O</code></td>
+<td>ο</td>
+<td><code>\omicron</code></td>
+</tr>
+<tr>
+<td>Π</td>
+<td><code>\Pi</code></td>
+<td>π</td>
+<td><code>\pi</code></td>
+</tr>
+<tr>
+<td>P</td>
+<td><code>P</code></td>
+<td>ρ</td>
+<td><code>\rho</code></td>
+</tr>
+<tr>
+<td>Σ</td>
+<td><code>\Sigma</code></td>
+<td>σ</td>
+<td><code>\sigma</code></td>
+</tr>
+<tr>
+<td>T</td>
+<td><code>T</code></td>
+<td>τ</td>
+<td><code>\tau</code></td>
+</tr>
+<tr>
+<td>Υ</td>
+<td><code>\Upsilon</code></td>
+<td>υ</td>
+<td><code>\upsilon</code></td>
+</tr>
+<tr>
+<td>Φ</td>
+<td><code>\Phi</code></td>
+<td>ϕ</td>
+<td><code>\phi</code></td>
+</tr>
+<tr>
+<td>X</td>
+<td><code>X</code></td>
+<td>χ</td>
+<td><code>\chi</code></td>
+</tr>
+<tr>
+<td>Ψ</td>
+<td><code>\Psi</code></td>
+<td>ψ</td>
+<td><code>\psi</code></td>
+</tr>
+<tr>
+<td>Ω</td>
+<td><code>\v</code></td>
+<td>ω</td>
+<td><code>\omega</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="hexo支持latex语法"><a href="#hexo支持latex语法" class="headerlink" title="hexo支持latex语法"></a>hexo支持latex语法</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-math --save</span><br></pre></td></tr></table></figure>
+<p>在站点配置文件 <em>_config.yml</em> 中添加：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">math:</span></span><br><span class="line"><span class="attr">  engine:</span> <span class="string">'mathjax'</span></span><br><span class="line"><span class="attr">  mathjax:</span></span><br><span class="line"><span class="attr">    src:</span> <span class="string">"https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"</span><span class="string">,</span></span><br><span class="line"><span class="attr">    config:</span> <span class="string">&#123;</span></span><br><span class="line"><span class="attr">      tex2jax:</span> <span class="string">&#123;</span></span><br><span class="line"><span class="attr">        inlineMath:</span> <span class="string">[</span> <span class="string">['$','$'],</span> <span class="string">["\\(","\\)"]</span> <span class="string">],</span></span><br><span class="line"><span class="attr">        skipTags:</span> <span class="string">['script',</span> <span class="string">'noscript'</span><span class="string">,</span> <span class="string">'style'</span><span class="string">,</span> <span class="string">'textarea'</span><span class="string">,</span> <span class="string">'pre'</span><span class="string">,</span> <span class="string">'code'</span><span class="string">],</span></span><br><span class="line"><span class="attr">        processEscapes:</span> <span class="literal">true</span></span><br><span class="line">      <span class="string">&#125;,</span></span><br><span class="line"><span class="attr">      TeX:</span> <span class="string">&#123;</span></span><br><span class="line"><span class="attr">        equationNumbers:</span> <span class="string">&#123;</span></span><br><span class="line"><span class="attr">          autoNumber:</span> <span class="string">"AMS"</span></span><br><span class="line">        <span class="string">&#125;</span></span><br><span class="line">      <span class="string">&#125;</span></span><br><span class="line">    <span class="string">&#125;</span></span><br><span class="line">  <span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>在 next 主题配置文件中 <em>themes/next-theme/_config.yml</em> 中将 mathJax 设为 true:</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ol>
+<li><a href="https://github.com/hexojs/hexo-math" target="_blank" rel="noopener">https://github.com/hexojs/hexo-math</a></li>
+<li><a href="http://stevenshi.me/2017/06/26/hexo-insert-formula/" target="_blank" rel="noopener">http://stevenshi.me/2017/06/26/hexo-insert-formula/</a></li>
+<li><a href="https://www.jianshu.com/p/e74eb43960a1" target="_blank" rel="noopener">https://www.jianshu.com/p/e74eb43960a1</a></li>
+<li><a href="http://latex.codecogs.com/eqneditor/editor.php" target="_blank" rel="noopener">http://latex.codecogs.com/eqneditor/editor.php</a></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>风月</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="/tools-markdown/" title="markdown之数学公式语法">/tools-markdown/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/markdown/" rel="tag"># markdown</a>
+          
+            <a href="/tags/hexo/" rel="tag"># hexo</a>
+          
+            <a href="/tags/latex/" rel="tag"># latex</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/algorithm-HLL/" rel="next" title="HyperLogLog算法">
+                <i class="fa fa-chevron-left"></i> HyperLogLog算法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zODM1NS8xNDg4Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="风月" />
+            
+              <p class="site-author-name" itemprop="name">风月</p>
+              <p class="site-description motion-element" itemprop="description">记录工作中学习的小知识点</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">15</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">24</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:419444595@qq.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://weibo.com/smuler" target="_blank" title="weibo" rel="external nofollow"><i class="fa fa-fw fa-weibo"></i>weibo</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰的网络日志" target="_blank">阮一峰的网络日志</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#行内与独行"><span class="nav-text">行内与独行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#上标、下标与组合"><span class="nav-text">上标、下标与组合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#汉字、字体与格式"><span class="nav-text">汉字、字体与格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#占位符"><span class="nav-text">占位符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定界符与组合"><span class="nav-text">定界符与组合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四则运算"><span class="nav-text">四则运算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高级运算"><span class="nav-text">高级运算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#逻辑运算"><span class="nav-text">逻辑运算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#集合运算"><span class="nav-text">集合运算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数学符号"><span class="nav-text">数学符号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#希腊字母"><span class="nav-text">希腊字母</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo支持latex语法"><span class="nav-text">hexo支持latex语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考链接"><span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">风月</span>
+
+  
+
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.3.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="http://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
